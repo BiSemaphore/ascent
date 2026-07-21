@@ -71,9 +71,15 @@ One event, many independent consumers — that's genuine event-driven architectu
 
 ## 5. Data
 
-- **PostgreSQL per service** — independent schemas, migrations, and lifecycles.
+- **PostgreSQL per service** — the system of record for relational data (users, content, cohorts, enrollments). Independent schemas, migrations, and lifecycles. Accessed via **Drizzle** (`drizzle-kit` migrations).
+- **MongoDB** — activity feed, audit trail, security events, and structured app logs. Append-heavy, schema-flexible, rarely joined, so a document store fits better than Postgres. Accessed via the official `mongodb` native driver.
 - **Redis** — leaderboards (sorted sets), caching, and later the judge's job coordination.
 - **Kafka** — the event log; durable, replayable.
+
+### Activity logging (MongoDB) — how it evolves
+The end-state is a dedicated **Activity service** that owns MongoDB and, from Phase 3 on, consumes Kafka events (`UserRegistered`, `LearnerEnrolled`, `SubmissionJudged`, ...) and writes activity documents. An activity log is a natural Kafka fan-out consumer.
+
+We build it in slices: **for now it starts inside the Auth service** (an activity-logging module records register, login, and failed-login events to MongoDB). It is extracted into its own service and switched to Kafka consumption in Phase 3.
 
 ## 6. Concurrency-critical spots (the hard problems)
 
@@ -87,6 +93,7 @@ One event, many independent consumers — that's genuine event-driven architectu
 | **NestJS** for all services | First-class Kafka microservice transport, consistent DI/module structure across services, TypeScript throughout |
 | **Kafka** (not just REST) | The project's core learning goal is event-driven architecture; the judge→fan-out flow needs it authentically |
 | **Postgres per service** | True service independence; each context owns its data |
+| **Drizzle ORM** (data layer) | SQL-first and thin: schema and queries stay close to raw SQL and fully type-safe, so the DB layer is understood, not a black box. Migrations via `drizzle-kit`. Same choice across all services |
 | **Nginx** gateway/LB | Single entry point, routing, load balancing, TLS termination |
 | **Angular** (modern) | Showcase Signals, standalone components, new control flow, `@defer`, real-time via WebSocket |
 | **Docker Compose** | One command to run the whole system locally |
