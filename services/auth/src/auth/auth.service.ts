@@ -1,0 +1,78 @@
+import {
+  ConflictException,
+  Inject,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
+import { eq } from 'drizzle-orm';
+import { ActivityService } from '../activity/activity.service';
+import { DB } from '../database/database.module';
+import { users } from '../database/schema';
+import { LoginDto } from './dto/login.dto';
+import { RegisterDto } from './dto/register.dto';
+import type { Database } from '../database/database.module';
+import type { Role } from '../database/schema';
+
+const SALT_ROUNDS = 10;
+
+@Injectable()
+export class AuthService {
+  constructor(
+    @Inject(DB) private readonly db: Database,
+    private readonly jwt: JwtService,
+    private readonly activity: ActivityService,
+  ) {}
+
+  async register(dto: RegisterDto, ip?: string) {
+    const [existing] = await this.db
+      .select({ id: users.id })
+      .from(users)
+      .where(eq(users.email, dto.email))
+      .limit(1);
+    if (existing) {
+      throw new ConflictException('Email already registered');
+    }
+
+    const passwordHash = await bcrypt.hash(dto.password, SALT_ROUNDS);
+    const [user] = await this.db
+      .insert(users)
+      .values({ email: dto.email, passwordHash, role: dto.role ?? 'learner' })
+      .returning({ id: users.id, email: users.email, role: users.role });
+
+    await this.activity.log({
+      type: 'user.registered',
+      userId: user.id,
+      email: user.email,
+      ip,
+    });
+    return this.sign(user.id, user.email, user.role);
+  }
+
+  async login(dto: LoginDto, ip?: string) {
+    const [user] = await this.db
+      .select()
+      .from(users)
+      .where(eq(users.email, dto.email))
+      .limit(1);
+
+    if (!user || !(await bcrypt.compare(dto.password, user.passwordHash))) {
+      await this.activity.log({ type: 'login.failed', email: dto.email, ip });
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    await this.activity.log({
+      type: 'user.logged_in',
+      userId: user.id,
+      email: user.email,
+      ip,
+    });
+    return this.sign(user.id, user.email, user.role);
+  }
+
+  private sign(id: string, email: string, role: Role) {
+    const accessToken = this.jwt.sign({ sub: id, email, role });
+    return { accessToken, user: { id, email, role } };
+  }
+}
