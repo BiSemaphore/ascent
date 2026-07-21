@@ -140,6 +140,7 @@ cut a GitHub Release with notes.
 
 Steps at the end of a phase:
 ```
+# 1. move CHANGELOG.md [Unreleased] entries under a new [vX.Y.0] heading
 git tag vX.Y.0
 git push origin vX.Y.0
 gh release create vX.Y.0 --title "Phase N: <name>" --notes "<what shipped>"
