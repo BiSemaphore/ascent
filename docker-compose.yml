@@ -1,0 +1,9 @@
+# Ascent — local development stack.
+# Grows one phase at a time. Right now it is intentionally empty:
+# Phase 1 will add the first services (auth, content) and their Postgres DBs.
+#
+# Run with:  docker-compose up
+#
+# Note: modern Docker Compose does not need a top-level `version:` key.
+
+services: {}
