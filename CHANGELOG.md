@@ -33,5 +33,7 @@ Phase 1 is complete.
   `@ascent/auth`, own Postgres via Drizzle.
 - `docs/CONVENTIONS.md` service blueprint; ARCHITECTURE cross-cutting concerns
   (gateway responsibilities, rate limiting, load balancing, scheduled jobs).
+- Nginx gateway routing `/api/auth/*` and `/api/content/*` with per-IP edge rate
+  limiting (`limit_req`), single entry point on port 8080.
 
 [Unreleased]: https://github.com/BiSemaphore/ascent/commits/main
