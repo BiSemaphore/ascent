@@ -35,5 +35,7 @@ Phase 1 is complete.
   (gateway responsibilities, rate limiting, load balancing, scheduled jobs).
 - Nginx gateway routing `/api/auth/*` and `/api/content/*` with per-IP edge rate
   limiting (`limit_req`), single entry point on port 8080.
+- Full containerization: multi-stage Dockerfiles for Auth and Content, startup
+  migrations, compose runs the whole stack (`docker-compose up`).
 
 [Unreleased]: https://github.com/BiSemaphore/ascent/commits/main

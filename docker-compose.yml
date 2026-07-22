@@ -46,15 +46,51 @@ services:
       timeout: 3s
       retries: 5
 
+  auth:
+    build:
+      context: .
+      dockerfile: services/auth/Dockerfile
+    container_name: ascent-auth
+    depends_on:
+      auth-db:
+        condition: service_healthy
+      auth-mongo:
+        condition: service_healthy
+    environment:
+      PORT: 3001
+      DATABASE_URL: postgres://auth:auth@auth-db:5432/auth
+      MONGODB_URL: mongodb://auth-mongo:27017
+      MONGODB_DB: auth_activity
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-1d}
+    ports:
+      - "3001:3001"
+
+  content:
+    build:
+      context: .
+      dockerfile: services/content/Dockerfile
+    container_name: ascent-content
+    depends_on:
+      content-db:
+        condition: service_healthy
+    environment:
+      PORT: 3002
+      DATABASE_URL: postgres://content:content@content-db:5432/content
+      JWT_SECRET: ${JWT_SECRET}
+    ports:
+      - "3002:3002"
+
   gateway:
     image: nginx:1.27-alpine
     container_name: ascent-gateway
+    depends_on:
+      - auth
+      - content
     ports:
       - "8080:80"
     volumes:
       - ./gateway/nginx.conf:/etc/nginx/nginx.conf:ro
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
 
 volumes:
   auth-db-data:
