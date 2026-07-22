@@ -106,6 +106,8 @@ services:
       MONGODB_DB: auth_activity
       JWT_SECRET: ${JWT_SECRET}
       JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-1d}
+      SEED_ADMIN_EMAIL: ${SEED_ADMIN_EMAIL:-admin@ascent.local}
+      SEED_ADMIN_PASSWORD: ${SEED_ADMIN_PASSWORD:-}
     ports:
       - "3001:3001"
 
