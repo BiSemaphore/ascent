@@ -26,5 +26,12 @@ Phase 1 is complete.
 - MongoDB activity logging via the native driver (`user.registered`,
   `user.logged_in`, `login.failed`).
 - Drizzle seeder with a default admin user (`npm run seed`).
+- Shared `@ascent/auth` library (JWT strategy, `JwtAuthGuard`, `RolesGuard`,
+  `@Roles`, `@CurrentUser`, `Role`); Auth refactored to consume it.
+- Content service (NestJS): `programs → courses → modules → lessons`, CMS write
+  for instructors/admins and role-filtered delivery reads for learners, RBAC via
+  `@ascent/auth`, own Postgres via Drizzle.
+- `docs/CONVENTIONS.md` service blueprint; ARCHITECTURE cross-cutting concerns
+  (gateway responsibilities, rate limiting, load balancing, scheduled jobs).
 
 [Unreleased]: https://github.com/BiSemaphore/ascent/commits/main

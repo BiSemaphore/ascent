@@ -49,6 +49,8 @@ concurrency, real-time), designed as the whole product but **built in slices**.
 - `docs/PRD.md` — what we're building and why (business).
 - `docs/ARCHITECTURE.md` — services, communication, data, decisions (tech; revisit later).
 - `docs/ROADMAP.md` — the phased build plan.
+- `docs/CONVENTIONS.md` — the service blueprint every service follows (the *how*).
+  Build to this doc; deviations must be explicit, not silent.
 
 ## Session commands (slash commands in `.claude/commands/`)
 - **`/pickup`** — start of session: reads the docs + git state, reports the current

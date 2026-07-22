@@ -115,4 +115,38 @@ ascent/
 ```
 
 We start simple (each service standalone) and add shared libraries and services only when a phase needs them.
+
+## 9. Cross-cutting concerns
+
+Concerns that are not owned by one service. They live at the **edge** (Nginx) when
+they are infrastructure-level, and drop into a **service** only when they need
+identity or business context. They are never copied per service; reusable pieces
+go in `libs/`.
+
+### Rate limiting (two tiers)
+- **Edge (Nginx), global / per-IP:** `limit_req` at the gateway, before requests
+  reach any service. Coarse abuse and DoS protection; the gateway only knows IPs
+  and paths.
+- **Service (NestJS), per-user / per-endpoint:** business-aware limits that need
+  the JWT identity (e.g. login-attempt throttle, submission throttle), via
+  `@nestjs/throttler`, with **Redis** as the shared counter store so a limit holds
+  across replicas.
+
+### Load balancing
+- Only at **Nginx** (`upstream` across 2+ replicas of a service). Services stay
+  stateless so any replica can serve any request. Introduced in Phase 7.
+- Kafka consumer groups spread *async* work across consumers; that is a separate
+  axis from HTTP load balancing, not a substitute.
+
+### Scheduled jobs (cron)
+- A shared **`libs/cron` (`@ascent/cron`)** wrapping `@nestjs/schedule`, imported
+  by the service that owns a scheduled task. Expected uses: deadline reminders
+  (Notification, Phase 5), cohort content unlocks and certificate issuance
+  (Phase 6), retention/cleanup jobs. Built when the first real job appears, not
+  before.
+
+### The gateway's job (Nginx)
+Single entry point for all browser traffic: routing (`/api/<service>/*`), TLS
+termination, per-IP rate limiting, request-size caps, and load balancing across
+replicas. It holds no business logic.
 </content>
