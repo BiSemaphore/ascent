@@ -74,7 +74,11 @@ One event, many independent consumers — that's genuine event-driven architectu
 - **PostgreSQL per service** — the system of record for relational data (users, content, cohorts, enrollments). Independent schemas, migrations, and lifecycles. Accessed via **Drizzle** (`drizzle-kit` migrations).
 - **MongoDB** — activity feed, audit trail, security events, and structured app logs. Append-heavy, schema-flexible, rarely joined, so a document store fits better than Postgres. Accessed via the official `mongodb` native driver.
 - **Redis** — leaderboards (sorted sets), caching, and later the judge's job coordination.
+- **Elasticsearch** — search and analytics **index**, not a system of record. Full-text search over the catalog (programs, courses, lessons), plus searchable activity/audit logs and admin analytics aggregations. Rebuildable; Postgres stays the source of truth.
 - **Kafka** — the event log; durable, replayable.
+
+### Search (Elasticsearch) — how it fits
+A planned **Search service** owns Elasticsearch and is another **Kafka consumer**: it indexes content from events (`ContentPublished`, `LessonUpdated`, ...) and exposes `/api/search`. Same fan-out pattern as Progress/Gamification/Activity, so it arrives **after Kafka (Phase 3)** and is most valuable once there is real content to search. Not for leaderboards (Redis) or as a source of truth (Postgres).
 
 ### Activity logging (MongoDB) — how it evolves
 The end-state is a dedicated **Activity service** that owns MongoDB and, from Phase 3 on, consumes Kafka events (`UserRegistered`, `LearnerEnrolled`, `SubmissionJudged`, ...) and writes activity documents. An activity log is a natural Kafka fan-out consumer.
