@@ -189,3 +189,42 @@ Fixed, non-overlapping allocations. New services take the next free number.
   useful (`feat(auth): ...`). No Claude/Anthropic attribution in commits or PRs.
 - Update `CHANGELOG.md` `[Unreleased]` as features land. One tag + GitHub Release
   per completed phase (see `ROADMAP.md`).
+
+## 14. Frontend (Angular)
+
+Modern, standalone Angular built to enterprise conventions. The Angular app lives
+in `web/`.
+
+- **Standalone components** (no NgModules), **signals** for state, new control flow
+  (`@if` / `@for`), and lazy-loaded routes (`loadComponent`).
+- **Feature-first folders:**
+  ```
+  web/src/
+    environments/            environment.ts (+ .development.ts, fileReplacements)
+    app/
+      core/
+        config/api.ts        one map of every endpoint URL
+        services/            one service per domain (Auth, Content, CohortApi)
+        guards/              route guards
+        interceptors/        auth + error (functional interceptors)
+      shared/
+        models/              typed DTOs
+        ui/                  reusable presentational components
+      features/<feature>/    lazy-loaded pages
+  ```
+- **API calls live in services, never in components.** Components inject a domain
+  service and consume it. Reads use `httpResource` exposed as a service field;
+  mutations are service methods returning typed observables. No `HttpClient` in
+  components.
+- **One service per domain.** No god `ApiService`.
+- **URLs in one place:** `core/config/api.ts`, built from `environment.apiBase`.
+  Never hardcode a URL string in a service or component.
+- **Typed DTOs in `shared/models`.** No `any`.
+- **Functional interceptors:** `auth` attaches the JWT; `error` centralises failure
+  handling (401 -> logout -> `/login`). Do not attach tokens or handle 401s ad hoc.
+- **RxJS orchestration lives in services** (`switchMap` etc.), not components; never
+  nest `subscribe`. Components subscribe once (or use `httpResource`/`async`).
+- **State:** signals-first via services. No NgRx unless complexity demands it.
+- **Design system:** tokens in `styles.scss` (color, type, spacing; light + dark,
+  theme-aware). Type: Space Grotesk (display), IBM Plex Sans (body), IBM Plex Mono
+  (data/labels). Base components are class-based; keep the look minimal and precise.

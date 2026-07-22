@@ -1,0 +1,26 @@
+.auth {
+  max-width: 380px;
+  margin: 0 auto;
+  padding-top: 8vh;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.mark {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.mark h1 {
+  font-size: 2.4rem;
+}
+
+.card h2 {
+  margin-bottom: 1.25rem;
+}
+
+.auth .btn-link {
+  align-self: center;
+}

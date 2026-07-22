@@ -1,13 +1,14 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Auth } from '../../core/auth';
-import { Role } from '../../core/models';
+import { Auth } from '../../core/services/auth';
+import { Role } from '../../shared/models';
 
 @Component({
   selector: 'app-login',
   imports: [FormsModule],
   templateUrl: './login.html',
+  styleUrl: './login.scss',
 })
 export class Login {
   private auth = inject(Auth);
@@ -33,10 +34,10 @@ export class Login {
         ? this.auth.login(this.email, this.password)
         : this.auth.register(this.email, this.password, this.role);
     request.subscribe({
-      next: () => this.router.navigate(['/programs']),
+      next: () => this.router.navigate(['/cohorts']),
       error: (e) => {
         this.loading.set(false);
-        this.error.set(e?.error?.message ?? 'Request failed');
+        this.error.set(e?.error?.message ?? 'Something went wrong. Try again.');
       },
     });
   }

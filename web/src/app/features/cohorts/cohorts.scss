@@ -1,0 +1,75 @@
+.page-head {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  margin-bottom: 1.75rem;
+}
+
+.create {
+  margin-bottom: 1.75rem;
+}
+
+.create h2 {
+  margin-bottom: 1.1rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.status {
+  margin-bottom: 1rem;
+  font-size: 0.88rem;
+}
+
+.cohorts {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+}
+
+.cohort {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.cohort-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.cohort-head h2 {
+  font-size: 1.05rem;
+}
+
+.meta {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  margin-top: -0.4rem;
+}
+
+.enroll {
+  margin-top: 0.35rem;
+}
+
+.empty {
+  text-align: center;
+  padding: 2.5rem 1rem;
+}
+
+@media (max-width: 520px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

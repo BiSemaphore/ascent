@@ -1,25 +1,86 @@
 .topbar {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  padding: 0.8rem 1.25rem;
-  border-bottom: 1px solid var(--border);
-  background: var(--panel);
+  gap: 1.5rem;
+  height: 3.5rem;
+  padding: 0 1.5rem;
+  border-bottom: 1px solid var(--line);
+  background: color-mix(in srgb, var(--paper) 85%, transparent);
+  backdrop-filter: blur(8px);
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
-.topbar .brand {
+.brand {
+  font-family: var(--font-display);
   font-weight: 700;
+  font-size: 1.1rem;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+.nav {
+  display: flex;
+  gap: 1.25rem;
+}
+
+.nav a {
+  font-size: 0.9rem;
+  color: var(--muted);
+  padding: 0.2rem 0;
+  border-bottom: 2px solid transparent;
+}
+
+.nav a.active {
+  color: var(--ink);
+  border-bottom-color: var(--accent);
+}
+
+.right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.who {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--muted);
   letter-spacing: 0.02em;
 }
 
-.topbar .who {
-  margin-left: auto;
-  color: var(--muted);
-  font-size: 0.9rem;
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--ink-2);
+  cursor: pointer;
+}
+
+.icon-btn:hover {
+  border-color: var(--ink-2);
+  color: var(--ink);
 }
 
 .content {
-  max-width: 720px;
+  max-width: 780px;
   margin: 0 auto;
-  padding: 1.5rem 1.25rem;
+  padding: 2rem 1.5rem 4rem;
+}
+
+@media (max-width: 560px) {
+  .who {
+    display: none;
+  }
+  .topbar {
+    gap: 1rem;
+  }
 }

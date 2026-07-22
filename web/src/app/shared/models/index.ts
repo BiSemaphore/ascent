@@ -18,3 +18,22 @@ export interface Program {
   published: boolean;
   createdAt: string;
 }
+
+export interface Cohort {
+  id: string;
+  programId: string;
+  title: string;
+  startDate: string;
+  seatLimit: number;
+  seatsTaken: number;
+  seatsRemaining: number;
+  full: boolean;
+  createdAt: string;
+}
+
+export interface CreateCohort {
+  programId: string;
+  title: string;
+  startDate: string;
+  seatLimit: number;
+}

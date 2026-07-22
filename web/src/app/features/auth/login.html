@@ -1,0 +1,58 @@
+<div class="auth">
+  <div class="mark">
+    <span class="eyebrow">Cohort-based learning</span>
+    <h1>Ascent</h1>
+    <p class="muted">Climb toward mastery, together.</p>
+  </div>
+
+  <div class="card">
+    <h2>{{ mode() === 'login' ? 'Log in' : 'Create your account' }}</h2>
+
+    <form (ngSubmit)="submit()">
+      <label>
+        Email
+        <input
+          type="email"
+          name="email"
+          [(ngModel)]="email"
+          required
+          autocomplete="email"
+          placeholder="you@example.com"
+        />
+      </label>
+      <label>
+        Password
+        <input
+          type="password"
+          name="password"
+          [(ngModel)]="password"
+          required
+          autocomplete="current-password"
+          placeholder="At least 8 characters"
+        />
+      </label>
+
+      @if (mode() === 'register') {
+        <label>
+          I am a
+          <select name="role" [(ngModel)]="role">
+            <option value="learner">Learner</option>
+            <option value="instructor">Instructor</option>
+          </select>
+        </label>
+      }
+
+      <button class="btn btn-primary btn-block" type="submit" [disabled]="loading()">
+        {{ loading() ? 'Please wait...' : mode() === 'login' ? 'Log in' : 'Sign up' }}
+      </button>
+    </form>
+
+    @if (error()) {
+      <p class="error">{{ error() }}</p>
+    }
+  </div>
+
+  <button type="button" class="btn-link" (click)="toggle()">
+    {{ mode() === 'login' ? 'Need an account? Sign up' : 'Have an account? Log in' }}
+  </button>
+</div>

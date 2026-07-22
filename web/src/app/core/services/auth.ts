@@ -1,7 +1,8 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { tap } from 'rxjs';
-import { AuthUser, LoginResponse, Role } from './models';
+import { API } from '../config/api';
+import { AuthUser, LoginResponse, Role } from '../../shared/models';
 
 function decode(token: string | null): AuthUser | null {
   if (!token) {
@@ -31,14 +32,14 @@ export class Auth {
 
   login(email: string, password: string) {
     return this.http
-      .post<LoginResponse>('/api/auth/login', { email, password })
+      .post<LoginResponse>(API.auth.login, { email, password })
       .pipe(tap((res) => this.setToken(res.accessToken)));
   }
 
   register(email: string, password: string, role: Role) {
     const body = role === 'learner' ? { email, password } : { email, password, role };
     return this.http
-      .post<LoginResponse>('/api/auth/register', body)
+      .post<LoginResponse>(API.auth.register, body)
       .pipe(tap((res) => this.setToken(res.accessToken)));
   }
 

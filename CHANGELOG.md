@@ -17,6 +17,13 @@ Phase 1 is complete.
   seat_limit` in a transaction plus a unique constraint. Load-tested: 20 concurrent
   enrollments on a 5-seat cohort yield exactly 5 enrolled, no overselling.
 - Gateway routes `/api/cohorts`; cohort service containerized in the compose stack.
+- Cohort enrollment UI: browse cohorts with a seat meter, enroll, staff open
+  cohorts (Angular).
+- Frontend architecture pass: feature-first structure (core/services, guards,
+  interceptors; shared/models, ui; lazy features), one service per domain with
+  centralized endpoints and environment config, auth + error interceptors
+  (401 -> logout), `httpResource` reads, and a minimal design system (tokens,
+  Space Grotesk / IBM Plex, light + dark). Documented in `docs/CONVENTIONS.md`.
 
 ## [0.1.0] - 2026-07-22
 
