@@ -29,6 +29,24 @@ services:
       timeout: 3s
       retries: 5
 
+  content-db:
+    image: postgres:17
+    container_name: ascent-content-db
+    environment:
+      POSTGRES_USER: content
+      POSTGRES_PASSWORD: content
+      POSTGRES_DB: content
+    ports:
+      - "5434:5432"
+    volumes:
+      - content-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U content -d content"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
 volumes:
   auth-db-data:
   auth-mongo-data:
+  content-db-data:
