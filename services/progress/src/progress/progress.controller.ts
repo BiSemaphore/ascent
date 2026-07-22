@@ -4,6 +4,7 @@ import { CurrentUser, JwtAuthGuard } from '@ascent/auth';
 import type { AuthUser } from '@ascent/auth';
 import { ProgressService } from './progress.service';
 
+/** HTTP API for reading a learner's progress (the event-built projection). */
 @ApiTags('progress')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)

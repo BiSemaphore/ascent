@@ -18,6 +18,7 @@ import { CreateModuleDto } from './dto/create-module.dto';
 import { CreateProgramDto } from './dto/create-program.dto';
 import { PublishDto } from './dto/publish.dto';
 
+/** HTTP API for the curriculum: authoring (staff) and delivery (learners). */
 @ApiTags('content')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RolesGuard)

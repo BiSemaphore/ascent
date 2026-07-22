@@ -64,10 +64,12 @@ export class ContentService {
     });
   }
 
+  /** Whether a role may author and see unpublished content. */
   private isStaff(role: Role) {
     return role === 'instructor' || role === 'admin';
   }
 
+  /** Create a program (CMS/write side). */
   async createProgram(userId: string, dto: CreateProgramDto) {
     const [program] = await this.db
       .insert(programs)
@@ -80,6 +82,10 @@ export class ContentService {
     return program;
   }
 
+  /**
+   * List programs (delivery/read side). Learners see only published programs;
+   * staff see all.
+   */
   async listPrograms(role: Role) {
     const query = this.db.select().from(programs);
     const rows = this.isStaff(role)
@@ -90,6 +96,11 @@ export class ContentService {
     return rows;
   }
 
+  /**
+   * A program with its nested courses, modules, and lessons. Learners get only
+   * published courses of a published program; staff get everything.
+   * @throws NotFoundException when the program is missing or unpublished for a learner
+   */
   async getProgramTree(id: string, role: Role) {
     const staff = this.isStaff(role);
 
@@ -144,6 +155,10 @@ export class ContentService {
     };
   }
 
+  /**
+   * Publish or unpublish a program.
+   * @throws NotFoundException when the program does not exist
+   */
   async setProgramPublished(id: string, published: boolean) {
     const [updated] = await this.db
       .update(programs)
@@ -156,6 +171,10 @@ export class ContentService {
     return updated;
   }
 
+  /**
+   * Add a course to a program.
+   * @throws NotFoundException when the program does not exist
+   */
   async createCourse(programId: string, userId: string, dto: CreateCourseDto) {
     await this.ensureProgram(programId);
     const [course] = await this.db
@@ -171,6 +190,10 @@ export class ContentService {
     return course;
   }
 
+  /**
+   * Publish or unpublish a course.
+   * @throws NotFoundException when the course does not exist
+   */
   async setCoursePublished(id: string, published: boolean) {
     const [updated] = await this.db
       .update(courses)
@@ -183,6 +206,10 @@ export class ContentService {
     return updated;
   }
 
+  /**
+   * Add a module to a course.
+   * @throws NotFoundException when the course does not exist
+   */
   async createModule(courseId: string, dto: CreateModuleDto) {
     await this.ensureCourse(courseId);
     const [created] = await this.db
@@ -192,6 +219,10 @@ export class ContentService {
     return created;
   }
 
+  /**
+   * Add a lesson to a module.
+   * @throws NotFoundException when the module does not exist
+   */
   async createLesson(moduleId: string, dto: CreateLessonDto) {
     await this.ensureModule(moduleId);
     const [created] = await this.db

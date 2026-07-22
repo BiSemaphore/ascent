@@ -13,6 +13,7 @@ import type { AuthUser } from '@ascent/auth';
 import { CohortService } from './cohort.service';
 import { CreateCohortDto } from './dto/create-cohort.dto';
 
+/** HTTP API for cohorts: browse, open (staff), and enroll (learners). */
 @ApiTags('cohorts')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RolesGuard)

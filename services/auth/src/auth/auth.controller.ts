@@ -6,6 +6,7 @@ import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 
+/** HTTP API for authentication: register, login, and the current user. */
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
