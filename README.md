@@ -70,6 +70,7 @@ docs/        PRD, ARCHITECTURE, ROADMAP, CONVENTIONS
 
 - [`docs/PRD.md`](docs/PRD.md) — what we are building and why
 - [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — services, data, communication, decisions
+- [`docs/DATA-MODEL.md`](docs/DATA-MODEL.md) — per-service schemas, cross-service references, events
 - [`docs/ROADMAP.md`](docs/ROADMAP.md) — the phased build plan
 - [`docs/CONVENTIONS.md`](docs/CONVENTIONS.md) — the service and frontend blueprint every part follows
 - [`CHANGELOG.md`](CHANGELOG.md) — release history

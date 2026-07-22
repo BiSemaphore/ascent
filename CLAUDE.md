@@ -51,6 +51,8 @@ concurrency, real-time), designed as the whole product but **built in slices**.
 - `docs/ROADMAP.md` — the phased build plan.
 - `docs/CONVENTIONS.md` — the service blueprint every service follows (the *how*).
   Build to this doc; deviations must be explicit, not silent.
+- `docs/DATA-MODEL.md` — per-service schemas + cross-service references + events.
+  Design a service's data model here *before* coding its tables.
 
 ## Session commands (slash commands in `.claude/commands/`)
 - **`/pickup`** — start of session: reads the docs + git state, reports the current

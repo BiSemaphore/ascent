@@ -79,6 +79,9 @@ services/<name>/
 ## 5. Data layer (Postgres + Drizzle)
 
 - **One Postgres per service.** Services never read another service's tables.
+- **Design the schema before coding it.** A service's tables and its cross-service
+  references go in `docs/DATA-MODEL.md` first; no cross-service foreign keys
+  (services reference each other by id and stay consistent via events).
 - ORM: **Drizzle**, migrations via **drizzle-kit**.
 - `database/database.module.ts` is `@Global()` and provides two Symbol tokens:
   `PG_POOL` (the `pg` Pool) and `DB` (the Drizzle instance). It implements
