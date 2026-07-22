@@ -17,10 +17,17 @@ import { CreateProgramDto } from './dto/create-program.dto';
 import type { Database } from '../database/database.module';
 import type { Role } from '@ascent/auth';
 
+/** Owns the curriculum (programs, courses, modules, lessons) and lesson completion. */
 @Injectable()
 export class ContentService {
   constructor(@Inject(DB) private readonly db: Database) {}
 
+  /**
+   * Record that a learner completed a lesson and emit `LessonCompleted` via the
+   * outbox (same transaction). Idempotent: completing again is a no-op and emits
+   * nothing.
+   * @throws NotFoundException when the lesson does not exist
+   */
   async completeLesson(userId: string, lessonId: string) {
     const [lesson] = await this.db
       .select({ id: lessons.id, programId: courses.programId })

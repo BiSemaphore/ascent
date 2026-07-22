@@ -15,6 +15,12 @@ import type { EventEnvelope } from '@ascent/contracts';
 const POLL_MS = 1000;
 const BATCH = 50;
 
+/**
+ * Publishes the Transactional Outbox to Kafka. Polls unpublished rows on an
+ * interval, emits each to its topic, and stamps `published_at`. Uses
+ * `FOR UPDATE SKIP LOCKED` so multiple replicas never publish the same row; a
+ * crash mid-publish just re-publishes next tick (at-least-once).
+ */
 @Injectable()
 export class OutboxRelay implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(OutboxRelay.name);
@@ -36,6 +42,7 @@ export class OutboxRelay implements OnModuleInit, OnModuleDestroy {
     }
   }
 
+  /** Publish one batch of unpublished outbox rows; skips if a flush is in flight. */
   private async flush() {
     if (this.running) {
       return;

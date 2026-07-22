@@ -17,6 +17,7 @@ import type { Role } from '@ascent/auth';
 
 const SALT_ROUNDS = 10;
 
+/** Accounts and identity: registration, login, and JWT issuance. */
 @Injectable()
 export class AuthService {
   constructor(
@@ -25,6 +26,12 @@ export class AuthService {
     private readonly activity: ActivityService,
   ) {}
 
+  /**
+   * Register a new account, hash the password, log the activity, and return a JWT.
+   * @param dto - email, password, and optional signup role
+   * @param ip - caller IP, recorded in the activity log
+   * @throws ConflictException when the email is already registered
+   */
   async register(dto: RegisterDto, ip?: string) {
     const [existing] = await this.db
       .select({ id: users.id })
@@ -50,6 +57,12 @@ export class AuthService {
     return this.sign(user.id, user.email, user.role);
   }
 
+  /**
+   * Verify credentials, log the attempt (success or failure), and return a JWT.
+   * @param dto - email and password
+   * @param ip - caller IP, recorded in the activity log
+   * @throws UnauthorizedException when the credentials are invalid
+   */
   async login(dto: LoginDto, ip?: string) {
     const [user] = await this.db
       .select()
@@ -71,6 +84,7 @@ export class AuthService {
     return this.sign(user.id, user.email, user.role);
   }
 
+  /** Sign a JWT for a user and return it with a trimmed user object. */
   private sign(id: string, email: string, role: Role) {
     const accessToken = this.jwt.sign({ sub: id, email, role });
     return { accessToken, user: { id, email, role } };

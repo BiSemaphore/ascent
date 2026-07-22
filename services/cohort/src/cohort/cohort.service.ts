@@ -16,6 +16,11 @@ import type { Cohort } from '../database/schema';
 export class CohortService {
   constructor(@Inject(DB) private readonly db: Database) {}
 
+  /**
+   * Open a new cohort of a program.
+   * @param userId - the staff member opening the cohort (stored as `createdBy`)
+   * @param dto - program, title, start date, and seat limit
+   */
   async create(userId: string, dto: CreateCohortDto) {
     const [cohort] = await this.db
       .insert(cohorts)
@@ -30,6 +35,7 @@ export class CohortService {
     return this.withSeats(cohort);
   }
 
+  /** List all cohorts (each with computed seats-remaining), earliest start first. */
   async list() {
     const rows = await this.db
       .select()
@@ -38,6 +44,10 @@ export class CohortService {
     return rows.map((c) => this.withSeats(c));
   }
 
+  /**
+   * Fetch one cohort with its seat counts.
+   * @throws NotFoundException when the cohort does not exist
+   */
   async get(id: string) {
     const [cohort] = await this.db
       .select()
@@ -50,6 +60,13 @@ export class CohortService {
     return this.withSeats(cohort);
   }
 
+  /**
+   * Enroll a learner into a cohort, concurrency-safe. Uses an atomic conditional
+   * update (`seats_taken < seat_limit`) so seats never oversell, and writes a
+   * `LearnerEnrolled` event to the outbox in the same transaction.
+   * @throws NotFoundException when the cohort does not exist
+   * @throws ConflictException when already enrolled or the cohort is full
+   */
   async enroll(cohortId: string, userId: string) {
     const [exists] = await this.db
       .select({ id: cohorts.id })
@@ -108,6 +125,7 @@ export class CohortService {
     return result;
   }
 
+  /** Add computed `seatsRemaining` and `full` to a raw cohort row. */
   private withSeats(c: Cohort) {
     return {
       ...c,

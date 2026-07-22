@@ -13,12 +13,17 @@ import type {
   LessonCompleted,
 } from '@ascent/contracts';
 
+/**
+ * Builds per-learner progress by projecting domain events. Owns no source data;
+ * every row is derived from a consumed event, and every handler is idempotent.
+ */
 @Injectable()
 export class ProgressService {
   private readonly logger = new Logger(ProgressService.name);
 
   constructor(@Inject(DB) private readonly db: Database) {}
 
+  /** Project a `LearnerEnrolled` event into the learner's cohort list. */
   async applyLearnerEnrolled(event: EventEnvelope<LearnerEnrolled>) {
     await this.db.transaction(async (tx) => {
       if (!(await this.markProcessed(tx, event.eventId))) {
@@ -39,6 +44,7 @@ export class ProgressService {
     });
   }
 
+  /** Project a `LessonCompleted` event into the learner's completed-lesson list. */
   async applyLessonCompleted(event: EventEnvelope<LessonCompleted>) {
     await this.db.transaction(async (tx) => {
       if (!(await this.markProcessed(tx, event.eventId))) {
@@ -59,6 +65,10 @@ export class ProgressService {
     });
   }
 
+  /**
+   * A learner's progress: their enrolled cohorts, completed lessons, and count.
+   * @param userId - the learner to read progress for
+   */
   async forLearner(userId: string) {
     const [cohorts, lessons] = await Promise.all([
       this.db
@@ -73,6 +83,10 @@ export class ProgressService {
     return { cohorts, lessonsCompleted: lessons.length, lessons };
   }
 
+  /**
+   * Record an event id as processed for idempotency.
+   * @returns true if this is the first time the event is seen; false if a duplicate
+   */
   private async markProcessed(
     tx: Parameters<Parameters<Database['transaction']>[0]>[0],
     eventId: string,
