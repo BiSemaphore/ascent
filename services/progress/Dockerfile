@@ -5,6 +5,7 @@ RUN npm ci
 RUN npm run build -w libs/auth \
   && npm run build -w libs/contracts \
   && npm run build -w services/progress
+RUN npm prune --omit=dev
 
 FROM node:26-slim AS runtime
 ENV NODE_ENV=production

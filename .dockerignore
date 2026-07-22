@@ -9,3 +9,6 @@ coverage
 *.log
 .env
 **/.env
+experiments
+web/dist
+web/.angular
