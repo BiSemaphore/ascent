@@ -11,6 +11,9 @@ class EnvVars {
   @IsString()
   @MinLength(16)
   JWT_SECRET!: string;
+
+  @IsString()
+  KAFKA_BROKERS!: string;
 }
 
 export function validateEnv(config: Record<string, unknown>) {

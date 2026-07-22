@@ -7,12 +7,14 @@ import { AppService } from './app.service';
 import { validateEnv } from './config/env.validation';
 import { ContentModule } from './content/content.module';
 import { DatabaseModule } from './database/database.module';
+import { KafkaModule } from './events/kafka.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, validate: validateEnv }),
     PassportModule,
     DatabaseModule,
+    KafkaModule,
     ContentModule,
   ],
   controllers: [AppController],

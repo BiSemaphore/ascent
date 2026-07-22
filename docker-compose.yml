@@ -117,10 +117,13 @@ services:
     depends_on:
       content-db:
         condition: service_healthy
+      kafka:
+        condition: service_healthy
     environment:
       PORT: 3002
       DATABASE_URL: postgres://content:content@content-db:5432/content
       JWT_SECRET: ${JWT_SECRET}
+      KAFKA_BROKERS: kafka:9092
     ports:
       - "3002:3002"
 

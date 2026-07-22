@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 
 export const TOPICS = {
   learnerEnrolled: 'learner.enrolled',
+  lessonCompleted: 'lesson.completed',
 } as const;
 
 export interface EventEnvelope<T> {
@@ -20,6 +21,12 @@ export interface LearnerEnrolled {
   userId: string;
   programId: string;
   seatsRemaining: number;
+}
+
+export interface LessonCompleted {
+  lessonId: string;
+  programId: string;
+  userId: string;
 }
 
 export function createEvent<T>(params: {

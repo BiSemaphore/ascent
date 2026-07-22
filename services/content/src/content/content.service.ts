@@ -1,7 +1,15 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { and, asc, eq, inArray } from 'drizzle-orm';
+import { TOPICS, createEvent } from '@ascent/contracts';
 import { DB } from '../database/database.module';
-import { courses, lessons, modules, programs } from '../database/schema';
+import {
+  courses,
+  lessonCompletions,
+  lessons,
+  modules,
+  outbox,
+  programs,
+} from '../database/schema';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { CreateLessonDto } from './dto/create-lesson.dto';
 import { CreateModuleDto } from './dto/create-module.dto';
@@ -12,6 +20,42 @@ import type { Role } from '@ascent/auth';
 @Injectable()
 export class ContentService {
   constructor(@Inject(DB) private readonly db: Database) {}
+
+  async completeLesson(userId: string, lessonId: string) {
+    const [lesson] = await this.db
+      .select({ id: lessons.id, programId: courses.programId })
+      .from(lessons)
+      .innerJoin(modules, eq(lessons.moduleId, modules.id))
+      .innerJoin(courses, eq(modules.courseId, courses.id))
+      .where(eq(lessons.id, lessonId))
+      .limit(1);
+    if (!lesson) {
+      throw new NotFoundException('Lesson not found');
+    }
+
+    return this.db.transaction(async (tx) => {
+      const [completion] = await tx
+        .insert(lessonCompletions)
+        .values({ userId, lessonId })
+        .onConflictDoNothing()
+        .returning();
+      if (!completion) {
+        return { lessonId, alreadyCompleted: true };
+      }
+
+      const event = createEvent({
+        eventType: 'LessonCompleted',
+        producer: 'content',
+        payload: { lessonId, programId: lesson.programId, userId },
+      });
+      await tx.insert(outbox).values({
+        topic: TOPICS.lessonCompleted,
+        key: lesson.programId,
+        payload: event,
+      });
+      return { lessonId, completed: true };
+    });
+  }
 
   private isStaff(role: Role) {
     return role === 'instructor' || role === 'admin';

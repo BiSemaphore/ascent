@@ -17,8 +17,11 @@ Phase 1 is complete.
   is written in the enroll transaction, a relay (`FOR UPDATE SKIP LOCKED`) publishes
   it to Kafka and stamps it published (at-least-once, no dual-write).
 - Progress service (NestJS, own Postgres): consumes `learner.enrolled` and
-  projects per-learner enrollments; idempotent consumer (`processed_events`
-  dedup); `GET /api/progress` returns a learner's cohorts, built from events.
+  `lesson.completed`, projecting per-learner enrollments and completed lessons;
+  idempotent consumer (`processed_events` dedup); `GET /api/progress` returns a
+  learner's cohorts + lessons-completed, built from events.
+- Content publishes `lesson.completed` (its own Transactional Outbox) when a
+  learner completes a lesson (`POST /api/content/lessons/:id/complete`).
 - `experiments/kafka-raw`: raw kafkajs producer/consumer demo.
 
 ## [0.2.0] - 2026-07-22

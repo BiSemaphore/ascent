@@ -11,11 +11,16 @@ async function ensureTopics(brokers: string[]) {
   const admin = new Kafka({ clientId: 'progress-admin', brokers }).admin();
   await admin.connect();
   const existing = await admin.listTopics();
-  if (!existing.includes(TOPICS.learnerEnrolled)) {
+  const wanted = [TOPICS.learnerEnrolled, TOPICS.lessonCompleted].filter(
+    (t) => !existing.includes(t),
+  );
+  if (wanted.length > 0) {
     await admin.createTopics({
-      topics: [
-        { topic: TOPICS.learnerEnrolled, numPartitions: 3, replicationFactor: 1 },
-      ],
+      topics: wanted.map((topic) => ({
+        topic,
+        numPartitions: 3,
+        replicationFactor: 1,
+      })),
     });
   }
   await admin.disconnect();

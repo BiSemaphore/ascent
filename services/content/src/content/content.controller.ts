@@ -89,4 +89,13 @@ export class ContentController {
   ) {
     return this.content.createLesson(moduleId, dto);
   }
+
+  @Post('lessons/:lessonId/complete')
+  @Roles('learner')
+  completeLesson(
+    @Param('lessonId', ParseUUIDPipe) lessonId: string,
+    @CurrentUser() user: AuthUser,
+  ) {
+    return this.content.completeLesson(user.userId, lessonId);
+  }
 }
