@@ -1,0 +1,11 @@
+<header class="topbar">
+  <span class="brand">Ascent</span>
+  @if (auth.isLoggedIn()) {
+    <span class="who">{{ auth.user()?.email }} · {{ auth.user()?.role }}</span>
+    <button class="ghost" (click)="logout()">Log out</button>
+  }
+</header>
+
+<main class="content">
+  <router-outlet />
+</main>

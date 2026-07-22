@@ -37,5 +37,8 @@ Phase 1 is complete.
   limiting (`limit_req`), single entry point on port 8080.
 - Full containerization: multi-stage Dockerfiles for Auth and Content, startup
   migrations, compose runs the whole stack (`docker-compose up`).
+- Minimal Angular shell (`web/`): login/register, role-gated program+course
+  creation for instructors, program list for learners; dev server proxies
+  `/api/*` to the gateway.
 
 [Unreleased]: https://github.com/BiSemaphore/ascent/commits/main

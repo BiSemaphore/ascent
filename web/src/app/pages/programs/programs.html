@@ -1,0 +1,34 @@
+<h1>Programs</h1>
+
+@if (auth.isStaff()) {
+  <div class="card">
+    <h2>New program</h2>
+    <label>
+      Program title
+      <input [(ngModel)]="newTitle" placeholder="Full-Stack Development" />
+    </label>
+    <label>
+      First course (optional)
+      <input [(ngModel)]="newCourse" placeholder="Intro to TypeScript" />
+    </label>
+    <button (click)="create()">Create and publish</button>
+    @if (status()) {
+      <p class="status">{{ status() }}</p>
+    }
+  </div>
+}
+
+@if (programs().length === 0) {
+  <p class="muted">No programs to show yet.</p>
+} @else {
+  <ul class="programs">
+    @for (p of programs(); track p.id) {
+      <li>
+        <span>{{ p.title }}</span>
+        <span class="badge" [class.published]="p.published">
+          {{ p.published ? 'published' : 'draft' }}
+        </span>
+      </li>
+    }
+  </ul>
+}
