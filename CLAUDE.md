@@ -74,13 +74,15 @@ with heavy abstraction (especially **Kafka**), teach the raw layer FIRST:
 Always explain *why*, define jargon, and go one small step at a time.
 
 ## Where we are / next step
-- Planning docs done (PRD, ARCHITECTURE, ROADMAP). **Phase 0 complete:** monorepo
-  skeleton (`services/ gateway/ web/ libs/ docs/`), git on `main`, `.gitignore`,
-  **npm workspaces** (root `package.json`), empty `docker-compose.yml`.
-- User chose to **skip the "things a user can DO" list** and build directly.
-- **Open on the user's side:** start **Docker Desktop** (daemon was not running),
-  needed before Phase 1 services can `docker-compose up`.
-- **Suggested first action in a new session:** start **Phase 1** from `docs/ROADMAP.md`,
-  i.e. Auth + Content services + Nginx gateway, REST only, no Kafka. Confirm scope and
-  first service with the user. Nothing has been committed yet (commit only when asked).
+- **Phase 1 done, released as `v0.1.0`.** Shipped: Auth + Content services (own
+  Postgres each, Drizzle), shared `@ascent/auth` lib, MongoDB activity logging in
+  Auth, Nginx gateway (`/api/*` + edge rate limiting), full `docker-compose` stack,
+  and a minimal Angular shell in `web/`. All on `main` at `BiSemaphore/ascent`.
+- **Read `docs/CONVENTIONS.md`** — the service blueprint every new service follows.
+- Planned but not built (documented in ARCHITECTURE/ROADMAP): `@ascent/cron`
+  (scheduled jobs), Elasticsearch Search service (event-fed, post-Kafka).
+- **Suggested next:** start **Phase 2** from `docs/ROADMAP.md` — the **Cohort**
+  service and concurrency-safe enrollment (seat limits, no overselling). Build it to
+  the conventions doc. Confirm scope with the user first.
+- To run locally: `docker-compose up` (stack), and `npm start -w web` for the SPA.
 </content>

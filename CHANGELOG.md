@@ -9,6 +9,11 @@ Phase 1 is complete.
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-07-22
+
+Phase 1: Auth + Content behind an Nginx gateway with a minimal Angular shell,
+REST only, no Kafka.
+
 ### Added
 
 - Monorepo skeleton with npm workspaces (`services/*`, `libs/*`, `web`).
@@ -41,4 +46,5 @@ Phase 1 is complete.
   creation for instructors, program list for learners; dev server proxies
   `/api/*` to the gateway.
 
-[Unreleased]: https://github.com/BiSemaphore/ascent/commits/main
+[Unreleased]: https://github.com/BiSemaphore/ascent/compare/v0.1.0...main
+[0.1.0]: https://github.com/BiSemaphore/ascent/releases/tag/v0.1.0

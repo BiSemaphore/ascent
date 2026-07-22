@@ -20,7 +20,7 @@ This roadmap sequences the **cohort-based LMS**: we build a working content-and-
 
 ---
 
-## Phase 1 — Auth + Content (CMS + delivery) + gateway  ← we are here (backend done; Angular shell pending)
+## Phase 1 — Auth + Content (CMS + delivery) + gateway  (done; released as v0.1.0)
 **Goal:** the LMS backbone — accounts and course content — end to end, REST only, no Kafka yet.
 - [x] **Auth** service (NestJS): register, login, JWT, roles (learner / instructor / admin)
 - [x] **Content** service (NestJS):
@@ -29,7 +29,7 @@ This roadmap sequences the **cohort-based LMS**: we build a working content-and-
 - [x] Each service its own **Postgres**
 - [x] **Nginx** gateway routing `/api/auth/*` and `/api/content/*`
 - [x] `docker-compose up` runs it all
-- [ ] Minimal **Angular** shell: log in; instructor creates a course; learner sees the course list
+- [x] Minimal **Angular** shell: log in; instructor creates a course; learner sees the course list
 
 **Done when:** an instructor can create a course through the app and a learner can see it — all traffic flowing through Nginx to two independent services.
 
@@ -37,7 +37,7 @@ This roadmap sequences the **cohort-based LMS**: we build a working content-and-
 
 ---
 
-## Phase 2 — Cohorts + concurrency-safe enrollment
+## Phase 2 — Cohorts + concurrency-safe enrollment  ← we are here
 **Goal:** the heart of the product — scheduled batches with limited seats.
 - [ ] **Cohort** service (NestJS): admin opens a cohort of a program (start date, schedule, **seat limit**, mentors)
 - [ ] Learner **enrolls** in a cohort — concurrency-safe so seats never oversell (atomic conditional update / row lock)
