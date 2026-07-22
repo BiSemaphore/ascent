@@ -9,6 +9,15 @@ Phase 1 is complete.
 
 ## [Unreleased]
 
+### Added
+
+- Cohort service (NestJS, own Postgres): admin opens a cohort of a program (start
+  date, seat limit); learners enroll; anyone browses cohorts with seats-left.
+- Concurrency-safe enrollment: atomic conditional `UPDATE ... WHERE seats_taken <
+  seat_limit` in a transaction plus a unique constraint. Load-tested: 20 concurrent
+  enrollments on a 5-seat cohort yield exactly 5 enrolled, no overselling.
+- Gateway routes `/api/cohorts`; cohort service containerized in the compose stack.
+
 ## [0.1.0] - 2026-07-22
 
 Phase 1: Auth + Content behind an Nginx gateway with a minimal Angular shell,

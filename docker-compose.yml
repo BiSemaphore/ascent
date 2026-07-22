@@ -46,6 +46,23 @@ services:
       timeout: 3s
       retries: 5
 
+  cohort-db:
+    image: postgres:17
+    container_name: ascent-cohort-db
+    environment:
+      POSTGRES_USER: cohort
+      POSTGRES_PASSWORD: cohort
+      POSTGRES_DB: cohort
+    ports:
+      - "5435:5432"
+    volumes:
+      - cohort-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cohort -d cohort"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
   auth:
     build:
       context: .
@@ -81,12 +98,28 @@ services:
     ports:
       - "3002:3002"
 
+  cohort:
+    build:
+      context: .
+      dockerfile: services/cohort/Dockerfile
+    container_name: ascent-cohort
+    depends_on:
+      cohort-db:
+        condition: service_healthy
+    environment:
+      PORT: 3003
+      DATABASE_URL: postgres://cohort:cohort@cohort-db:5432/cohort
+      JWT_SECRET: ${JWT_SECRET}
+    ports:
+      - "3003:3003"
+
   gateway:
     image: nginx:1.27-alpine
     container_name: ascent-gateway
     depends_on:
       - auth
       - content
+      - cohort
     ports:
       - "8080:80"
     volumes:
@@ -96,3 +129,4 @@ volumes:
   auth-db-data:
   auth-mongo-data:
   content-db-data:
+  cohort-db-data:
