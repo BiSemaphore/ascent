@@ -1,5 +1,5 @@
 {
-  "name": "cohort",
+  "name": "progress",
   "version": "0.0.1",
   "description": "",
   "author": "",
@@ -23,12 +23,22 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@ascent/auth": "^0.0.1",
     "@ascent/contracts": "^0.0.1",
     "@nestjs/common": "^11.0.1",
+    "@nestjs/config": "^4.0.4",
     "@nestjs/core": "^11.0.1",
     "@nestjs/microservices": "^11.1.28",
+    "@nestjs/passport": "^11.0.5",
     "@nestjs/platform-express": "^11.0.1",
+    "@nestjs/swagger": "^11.4.6",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.15.1",
+    "drizzle-orm": "^0.45.2",
     "kafkajs": "^2.2.4",
+    "passport": "^0.7.0",
+    "passport-jwt": "^4.0.1",
+    "pg": "^8.22.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1"
   },

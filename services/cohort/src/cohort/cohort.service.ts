@@ -5,15 +5,20 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { and, asc, eq, sql } from 'drizzle-orm';
+import { TOPICS, createEvent } from '@ascent/contracts';
 import { DB } from '../database/database.module';
 import { cohorts, enrollments } from '../database/schema';
+import { KafkaPublisher } from '../events/kafka.publisher';
 import { CreateCohortDto } from './dto/create-cohort.dto';
 import type { Database } from '../database/database.module';
 import type { Cohort } from '../database/schema';
 
 @Injectable()
 export class CohortService {
-  constructor(@Inject(DB) private readonly db: Database) {}
+  constructor(
+    @Inject(DB) private readonly db: Database,
+    private readonly publisher: KafkaPublisher,
+  ) {}
 
   async create(userId: string, dto: CreateCohortDto) {
     const [cohort] = await this.db
@@ -59,7 +64,7 @@ export class CohortService {
       throw new NotFoundException('Cohort not found');
     }
 
-    return this.db.transaction(async (tx) => {
+    const result = await this.db.transaction(async (tx) => {
       const [enrollment] = await tx
         .insert(enrollments)
         .values({ cohortId, userId })
@@ -85,6 +90,23 @@ export class CohortService {
 
       return { enrollment, ...this.withSeats(updated) };
     });
+
+    await this.publisher.emit(
+      TOPICS.learnerEnrolled,
+      createEvent({
+        eventType: 'LearnerEnrolled',
+        producer: 'cohort',
+        payload: {
+          enrollmentId: result.enrollment.id,
+          cohortId,
+          userId,
+          programId: result.programId,
+          seatsRemaining: result.seatsRemaining,
+        },
+      }),
+    );
+
+    return result;
   }
 
   private withSeats(c: Cohort) {

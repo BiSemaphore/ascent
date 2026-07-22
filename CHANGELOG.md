@@ -9,6 +9,17 @@ Phase 1 is complete.
 
 ## [Unreleased]
 
+### Added
+
+- Kafka event backbone (single-node KRaft) in the stack.
+- `@ascent/contracts` shared lib: the event envelope and `LearnerEnrolled` type.
+- Cohort service publishes `learner.enrolled` after a successful enrollment
+  (NestJS Kafka transport).
+- Progress service (NestJS, own Postgres): consumes `learner.enrolled` and
+  projects per-learner enrollments; idempotent consumer (`processed_events`
+  dedup); `GET /api/progress` returns a learner's cohorts, built from events.
+- `experiments/kafka-raw`: raw kafkajs producer/consumer demo.
+
 ## [0.2.0] - 2026-07-22
 
 Phase 2: Cohorts and concurrency-safe enrollment, plus an enterprise Angular

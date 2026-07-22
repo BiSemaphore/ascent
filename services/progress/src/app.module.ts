@@ -4,18 +4,16 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtStrategy } from '@ascent/auth';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { CohortModule } from './cohort/cohort.module';
 import { validateEnv } from './config/env.validation';
 import { DatabaseModule } from './database/database.module';
-import { KafkaModule } from './events/kafka.module';
+import { ProgressModule } from './progress/progress.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, validate: validateEnv }),
     PassportModule,
     DatabaseModule,
-    KafkaModule,
-    CohortModule,
+    ProgressModule,
   ],
   controllers: [AppController],
   providers: [AppService, JwtStrategy],

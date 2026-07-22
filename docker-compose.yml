@@ -132,12 +132,50 @@ services:
     depends_on:
       cohort-db:
         condition: service_healthy
+      kafka:
+        condition: service_healthy
     environment:
       PORT: 3003
       DATABASE_URL: postgres://cohort:cohort@cohort-db:5432/cohort
       JWT_SECRET: ${JWT_SECRET}
+      KAFKA_BROKERS: kafka:9092
     ports:
       - "3003:3003"
+
+  progress-db:
+    image: postgres:17
+    container_name: ascent-progress-db
+    environment:
+      POSTGRES_USER: progress
+      POSTGRES_PASSWORD: progress
+      POSTGRES_DB: progress
+    ports:
+      - "5436:5432"
+    volumes:
+      - progress-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U progress -d progress"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  progress:
+    build:
+      context: .
+      dockerfile: services/progress/Dockerfile
+    container_name: ascent-progress
+    depends_on:
+      progress-db:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    environment:
+      PORT: 3004
+      DATABASE_URL: postgres://progress:progress@progress-db:5432/progress
+      JWT_SECRET: ${JWT_SECRET}
+      KAFKA_BROKERS: kafka:9092
+    ports:
+      - "3004:3004"
 
   gateway:
     image: nginx:1.27-alpine
@@ -146,6 +184,7 @@ services:
       - auth
       - content
       - cohort
+      - progress
     ports:
       - "8080:80"
     volumes:
@@ -156,4 +195,5 @@ volumes:
   auth-mongo-data:
   content-db-data:
   cohort-db-data:
+  progress-db-data:
   kafka-data:
