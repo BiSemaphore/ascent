@@ -6,7 +6,8 @@
   "workspaces": [
     "services/*",
     "libs/*",
-    "web"
+    "web",
+    "experiments/*"
   ],
   "scripts": {
     "stack:up": "docker-compose up -d",

@@ -1,0 +1,14 @@
+{
+  "name": "kafka-raw",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Raw kafkajs producer/consumer to feel Kafka mechanics before the NestJS transport.",
+  "scripts": {
+    "produce": "node producer.mjs",
+    "consume": "node consumer.mjs"
+  },
+  "dependencies": {
+    "kafkajs": "^2.2.4"
+  }
+}
