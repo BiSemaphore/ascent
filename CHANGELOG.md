@@ -9,6 +9,11 @@ Phase 1 is complete.
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-07-22
+
+Phase 2: Cohorts and concurrency-safe enrollment, plus an enterprise Angular
+frontend architecture. REST only, no Kafka yet.
+
 ### Added
 
 - Cohort service (NestJS, own Postgres): admin opens a cohort of a program (start
@@ -63,5 +68,6 @@ REST only, no Kafka.
   creation for instructors, program list for learners; dev server proxies
   `/api/*` to the gateway.
 
-[Unreleased]: https://github.com/BiSemaphore/ascent/compare/v0.1.0...main
+[Unreleased]: https://github.com/BiSemaphore/ascent/compare/v0.2.0...main
+[0.2.0]: https://github.com/BiSemaphore/ascent/releases/tag/v0.2.0
 [0.1.0]: https://github.com/BiSemaphore/ascent/releases/tag/v0.1.0

@@ -74,15 +74,17 @@ with heavy abstraction (especially **Kafka**), teach the raw layer FIRST:
 Always explain *why*, define jargon, and go one small step at a time.
 
 ## Where we are / next step
-- **Phase 1 done, released as `v0.1.0`.** Shipped: Auth + Content services (own
-  Postgres each, Drizzle), shared `@ascent/auth` lib, MongoDB activity logging in
-  Auth, Nginx gateway (`/api/*` + edge rate limiting), full `docker-compose` stack,
-  and a minimal Angular shell in `web/`. All on `main` at `BiSemaphore/ascent`.
-- **Read `docs/CONVENTIONS.md`** — the service blueprint every new service follows.
-- Planned but not built (documented in ARCHITECTURE/ROADMAP): `@ascent/cron`
-  (scheduled jobs), Elasticsearch Search service (event-fed, post-Kafka).
-- **Suggested next:** start **Phase 2** from `docs/ROADMAP.md` — the **Cohort**
-  service and concurrency-safe enrollment (seat limits, no overselling). Build it to
-  the conventions doc. Confirm scope with the user first.
-- To run locally: `docker-compose up` (stack), and `npm start -w web` for the SPA.
+- **Phases 1 and 2 done** (`v0.1.0`, `v0.2.0`). Shipped: Auth + Content + Cohort
+  services (own Postgres each, Drizzle), shared `@ascent/auth` lib, Mongo activity
+  logging in Auth, Nginx gateway (`/api/*` + rate limiting), full `docker-compose`
+  stack, concurrency-safe enrollment (load-tested), and an enterprise Angular app in
+  `web/` (Component -> Facade -> Repository, reactive forms, OnPush, lazy features).
+- **Read `docs/CONVENTIONS.md`** — the service + frontend blueprint everything follows.
+- Planned but not built (documented in ARCHITECTURE/ROADMAP): `@ascent/cron`,
+  Elasticsearch Search service (event-fed, post-Kafka).
+- **Suggested next:** **Phase 3** from `docs/ROADMAP.md` — the **Kafka** event
+  backbone + a **Progress** service. Teach Kafka raw first (kafkajs) before the Nest
+  transport. Apply the Kafka standard in memory (`kafka-enterprise-standards`):
+  at-least-once + idempotent consumers, event envelope, Transactional Outbox, DLT.
+- To run locally: `npm run dev` (or `npm run stack:up` + `npm run web`).
 </content>

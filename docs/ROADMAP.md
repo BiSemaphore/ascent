@@ -37,11 +37,11 @@ This roadmap sequences the **cohort-based LMS**: we build a working content-and-
 
 ---
 
-## Phase 2 — Cohorts + concurrency-safe enrollment  ← we are here
+## Phase 2 — Cohorts + concurrency-safe enrollment  (done; released as v0.2.0)
 **Goal:** the heart of the product — scheduled batches with limited seats.
-- [ ] **Cohort** service (NestJS): admin opens a cohort of a program (start date, schedule, **seat limit**, mentors)
-- [ ] Learner **enrolls** in a cohort — concurrency-safe so seats never oversell (atomic conditional update / row lock)
-- [ ] Angular: browse open cohorts, enroll, see "X seats left"
+- [x] **Cohort** service (NestJS): admin opens a cohort of a program (start date, schedule, **seat limit**, mentors)
+- [x] Learner **enrolls** in a cohort — concurrency-safe so seats never oversell (atomic conditional update / row lock)
+- [x] Angular: browse open cohorts, enroll, see "X seats left"
 
 **Done when:** hammering the enroll endpoint concurrently never exceeds the seat limit, and a learner is tied to a cohort.
 
@@ -49,7 +49,7 @@ This roadmap sequences the **cohort-based LMS**: we build a working content-and-
 
 ---
 
-## Phase 3 — Kafka event backbone + Progress
+## Phase 3 — Kafka event backbone + Progress  ← we are here
 **Goal:** introduce async, event-driven communication (the microservices spine).
 - [ ] Learn Kafka concepts first (brokers, topics, partitions, offsets, consumer groups)
 - [ ] Add **Kafka** to compose; build the first producer/consumer **raw with `kafkajs`** to understand it, then adopt NestJS's Kafka transport
