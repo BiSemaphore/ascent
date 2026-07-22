@@ -11,6 +11,11 @@ interface JwtPayload {
   role: Role;
 }
 
+/**
+ * Passport strategy that verifies the Bearer JWT with the shared `JWT_SECRET`
+ * and exposes the caller as an {@link AuthUser} on the request. Every service
+ * that authenticates provides this strategy.
+ */
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(config: ConfigService) {
@@ -21,6 +26,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
+  /**
+   * Maps a verified JWT payload to the {@link AuthUser} attached to the request.
+   * @param payload - the decoded, signature-verified token claims
+   */
   validate(payload: JwtPayload): AuthUser {
     return { userId: payload.sub, email: payload.email, role: payload.role };
   }

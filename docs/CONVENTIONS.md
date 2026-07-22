@@ -184,8 +184,10 @@ Fixed, non-overlapping allocations. New services take the next free number.
 
 ## 13. Comments, style, commits
 
-- **Minimal comments.** Write self-explanatory code; comment only a non-obvious
-  *why*, a gotcha, or a cross-service dependency. No comments that restate code.
+- **JSDoc on exported functions and classes** (purpose, `@param`, `@returns`,
+  `@throws` where useful) — document the contract, not the implementation.
+- **Minimal inline comments.** Inside a body, comment only a non-obvious *why*, a
+  gotcha, or a cross-service dependency. No comments that restate the code.
 - No emojis and no em-dashes anywhere (chat, docs, code, commits).
 - Prettier + ESLint come from the Nest scaffold; keep them.
 - **Conventional commits** (`feat:`, `fix:`, `chore:`, `docs:`), scoped where
