@@ -49,13 +49,13 @@ This roadmap sequences the **cohort-based LMS**: we build a working content-and-
 
 ---
 
-## Phase 3 — Kafka event backbone + Progress  ← we are here (LessonCompleted pending)
+## Phase 3 — Kafka event backbone + Progress  (done; released as v0.3.0)
 **Goal:** introduce async, event-driven communication (the microservices spine).
 - [x] Learn Kafka concepts first (brokers, topics, partitions, offsets, consumer groups)
 - [x] Add **Kafka** to compose; build the first producer/consumer **raw with `kafkajs`** to understand it, then adopt NestJS's Kafka transport
-- [x] `LearnerEnrolled` event, published via the **Transactional Outbox**
-- [ ] `LessonCompleted` event (Content) + Progress tracking real completion (lessons done / total)
-- [x] **Progress** service consumes `LearnerEnrolled` (idempotent consumer)
+- [x] `LearnerEnrolled` event (Cohort), published via the **Transactional Outbox**
+- [x] `LessonCompleted` event (Content), published via the outbox; Progress tracks completed lessons
+- [x] **Progress** service consumes both events (idempotent consumer)
 - [x] Introduce `libs/contracts` for shared event types
 
 **Done when:** completing a lesson in one service updates progress in another via Kafka, with no direct call between them.
@@ -64,7 +64,7 @@ This roadmap sequences the **cohort-based LMS**: we build a working content-and-
 
 ---
 
-## Payments — Stripe cohort purchase  (schedulable slice; needs Phases 2 + 3)
+## Payments — Stripe cohort purchase  ← schedulable next (needs Phases 2 + 3)
 **Goal:** paid cohorts, gated on payment via an event (not a synchronous call).
 - [ ] **Payment** service (own Postgres): create a **Stripe Checkout Session**, record payments
 - [ ] Stripe **webhook** endpoint; verify the signature; idempotent by Stripe event id

@@ -9,6 +9,11 @@ Phase 1 is complete.
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-07-22
+
+Phase 3: the Kafka event backbone and the Progress service. Cohort and Content
+publish domain events via the Transactional Outbox; Progress projects them.
+
 ### Added
 
 - Kafka event backbone (single-node KRaft) in the stack.
@@ -23,6 +28,17 @@ Phase 1 is complete.
 - Content publishes `lesson.completed` (its own Transactional Outbox) when a
   learner completes a lesson (`POST /api/content/lessons/:id/complete`).
 - `experiments/kafka-raw`: raw kafkajs producer/consumer demo.
+
+### Changed
+
+- Slimmer Docker images: `npm prune --omit=dev` drops dev tooling from runtime
+  images (~550 MB each).
+- JSDoc across the shared libs, all services, and the web app.
+
+### Security
+
+- No hardcoded admin password. The seed reads `SEED_ADMIN_PASSWORD` and skips
+  seeding an admin when it is unset, so no deployment ships a known login.
 
 ## [0.2.0] - 2026-07-22
 
@@ -83,6 +99,7 @@ REST only, no Kafka.
   creation for instructors, program list for learners; dev server proxies
   `/api/*` to the gateway.
 
-[Unreleased]: https://github.com/BiSemaphore/ascent/compare/v0.2.0...main
+[Unreleased]: https://github.com/BiSemaphore/ascent/compare/v0.3.0...main
+[0.3.0]: https://github.com/BiSemaphore/ascent/releases/tag/v0.3.0
 [0.2.0]: https://github.com/BiSemaphore/ascent/releases/tag/v0.2.0
 [0.1.0]: https://github.com/BiSemaphore/ascent/releases/tag/v0.1.0

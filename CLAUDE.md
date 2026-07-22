@@ -76,17 +76,17 @@ with heavy abstraction (especially **Kafka**), teach the raw layer FIRST:
 Always explain *why*, define jargon, and go one small step at a time.
 
 ## Where we are / next step
-- **Phases 1 and 2 done** (`v0.1.0`, `v0.2.0`). Shipped: Auth + Content + Cohort
-  services (own Postgres each, Drizzle), shared `@ascent/auth` lib, Mongo activity
-  logging in Auth, Nginx gateway (`/api/*` + rate limiting), full `docker-compose`
-  stack, concurrency-safe enrollment (load-tested), and an enterprise Angular app in
-  `web/` (Component -> Facade -> Repository, reactive forms, OnPush, lazy features).
-- **Read `docs/CONVENTIONS.md`** — the service + frontend blueprint everything follows.
-- Planned but not built (documented in ARCHITECTURE/ROADMAP): `@ascent/cron`,
-  Elasticsearch Search service (event-fed, post-Kafka).
-- **Suggested next:** **Phase 3** from `docs/ROADMAP.md` — the **Kafka** event
-  backbone + a **Progress** service. Teach Kafka raw first (kafkajs) before the Nest
-  transport. Apply the Kafka standard in memory (`kafka-enterprise-standards`):
-  at-least-once + idempotent consumers, event envelope, Transactional Outbox, DLT.
+- **Phases 1, 2, 3 done** (`v0.1.0`, `v0.2.0`, `v0.3.0`). Shipped: Auth + Content +
+  Cohort + **Progress** services (own Postgres each, Drizzle), shared `@ascent/auth`
+  and `@ascent/contracts` libs, Mongo activity log, Nginx gateway, full
+  `docker-compose` stack, concurrency-safe enrollment, **Kafka** event backbone with
+  the **Transactional Outbox** on producers and idempotent consumers, and an
+  enterprise Angular app (Component -> Facade -> Repository, reactive forms, OnPush).
+- **Read `docs/CONVENTIONS.md`** (service + frontend blueprint) and `docs/DATA-MODEL.md`.
+- Planned/documented but not built: **Payment** service (Stripe cohort purchase),
+  `@ascent/cron`, Elasticsearch Search service.
+- **Suggested next:** the **Payments** slice (Stripe Checkout -> `payment.completed`
+  -> enroll; see `payments-stripe-plan` in memory) or **Phase 4** (Assessments +
+  Judge). Confirm with the user.
 - To run locally: `npm run dev` (or `npm run stack:up` + `npm run web`).
 </content>
