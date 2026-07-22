@@ -3,11 +3,10 @@ import { ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import type { JwtSignOptions } from '@nestjs/jwt';
+import { JwtStrategy, RolesGuard } from '@ascent/auth';
 import { ActivityModule } from '../activity/activity.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { JwtStrategy } from './jwt.strategy';
-import { RolesGuard } from './roles.guard';
 
 @Module({
   imports: [

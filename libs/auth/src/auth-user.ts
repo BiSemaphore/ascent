@@ -1,5 +1,5 @@
 import { ExecutionContext, createParamDecorator } from '@nestjs/common';
-import type { Role } from '../database/schema';
+import type { Role } from './role';
 
 export interface AuthUser {
   userId: string;

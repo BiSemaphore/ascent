@@ -13,7 +13,7 @@ import { users } from '../database/schema';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import type { Database } from '../database/database.module';
-import type { Role } from '../database/schema';
+import type { Role } from '@ascent/auth';
 
 const SALT_ROUNDS = 10;
 
