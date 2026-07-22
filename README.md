@@ -30,14 +30,31 @@ side, one product, two audiences.
 
 ## Run it
 
+Prerequisite: Docker Desktop running, and `npm install` once at the repo root.
+
+One command (backend containers, detached, then the Angular dev server):
+
 ```bash
-docker-compose up            # auth, content, cohort, gateway, and datastores
-npm install                  # once, at the repo root (npm workspaces)
-npm start -w web             # the Angular app on http://localhost:4200
+npm run dev
 ```
 
-The gateway serves the API at `http://localhost:8080/api/*`. A default admin is
-seeded: `admin@ascent.local`.
+Or the two pieces separately:
+
+```bash
+npm run stack:up     # backend: auth, content, cohort, gateway, datastores (docker-compose up -d)
+npm run web          # frontend: Angular on http://localhost:4200
+```
+
+Then open **http://localhost:4200** and log in as `admin@ascent.local` /
+`admin12345`. The gateway serves the API at `http://localhost:8080/api/*`.
+
+Useful:
+
+```bash
+npm run stack:ps     # container status / health
+npm run stack:logs   # tail backend logs
+npm run stack:down   # stop the backend
+```
 
 ## Layout
 

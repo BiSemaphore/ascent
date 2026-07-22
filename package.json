@@ -8,6 +8,14 @@
     "libs/*",
     "web"
   ],
+  "scripts": {
+    "stack:up": "docker-compose up -d",
+    "stack:down": "docker-compose down",
+    "stack:logs": "docker-compose logs -f",
+    "stack:ps": "docker-compose ps",
+    "web": "npm start -w web",
+    "dev": "docker-compose up -d && npm start -w web"
+  },
   "engines": {
     "node": ">=26"
   }
