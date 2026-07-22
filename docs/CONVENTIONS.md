@@ -204,7 +204,7 @@ in `web/`.
     app/
       core/
         config/api.ts        one map of every endpoint URL
-        services/            one service per domain (Auth, Content, CohortApi)
+        services/            one service per domain (AuthService, ContentService, ...)
         guards/              route guards
         interceptors/        auth + error (functional interceptors)
       shared/
@@ -216,7 +216,10 @@ in `web/`.
   service and consume it. Reads use `httpResource` exposed as a service field;
   mutations are service methods returning typed observables. No `HttpClient` in
   components.
-- **One service per domain.** No god `ApiService`.
+- **One service per domain.** No god `ApiService`. Injectable services use the
+  `Service` suffix consistently (`auth.service.ts` -> `AuthService`); components use
+  no suffix (`Login`, `Cohorts`); guards and interceptors are camelCase functions
+  (`authGuard`, `errorInterceptor`).
 - **URLs in one place:** `core/config/api.ts`, built from `environment.apiBase`.
   Never hardcode a URL string in a service or component.
 - **Typed DTOs in `shared/models`.** No `any`.

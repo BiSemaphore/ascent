@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
-import { Auth } from './core/services/auth';
+import { AuthService } from './core/services/auth.service';
 
 type Theme = 'light' | 'dark';
 
@@ -11,7 +11,7 @@ type Theme = 'light' | 'dark';
   styleUrl: './app.scss',
 })
 export class App {
-  readonly auth = inject(Auth);
+  readonly auth = inject(AuthService);
   private router = inject(Router);
   theme = signal<Theme>(this.initTheme());
 

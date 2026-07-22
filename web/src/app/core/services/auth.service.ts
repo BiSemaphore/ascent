@@ -18,7 +18,7 @@ function decode(token: string | null): AuthUser | null {
 }
 
 @Injectable({ providedIn: 'root' })
-export class Auth {
+export class AuthService {
   private http = inject(HttpClient);
   private tokenSig = signal<string | null>(localStorage.getItem('token'));
 

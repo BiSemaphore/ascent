@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Auth } from '../../core/services/auth';
+import { AuthService } from '../../core/services/auth.service';
 import { Role } from '../../shared/models';
 
 @Component({
@@ -11,7 +11,7 @@ import { Role } from '../../shared/models';
   styleUrl: './login.scss',
 })
 export class Login {
-  private auth = inject(Auth);
+  private auth = inject(AuthService);
   private router = inject(Router);
 
   mode = signal<'login' | 'register'>('login');

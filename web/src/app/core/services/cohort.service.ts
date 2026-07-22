@@ -4,7 +4,7 @@ import { API } from '../config/api';
 import { Cohort, CreateCohort } from '../../shared/models';
 
 @Injectable({ providedIn: 'root' })
-export class CohortApi {
+export class CohortService {
   private http = inject(HttpClient);
 
   readonly cohorts = httpResource<Cohort[]>(() => API.cohorts.list);

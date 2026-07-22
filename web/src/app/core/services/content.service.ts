@@ -5,7 +5,7 @@ import { API } from '../config/api';
 import { Program } from '../../shared/models';
 
 @Injectable({ providedIn: 'root' })
-export class Content {
+export class ContentService {
   private http = inject(HttpClient);
 
   readonly programs = httpResource<Program[]>(() => API.content.programs);

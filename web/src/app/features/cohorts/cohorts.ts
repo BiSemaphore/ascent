@@ -1,9 +1,9 @@
 import { Component, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Auth } from '../../core/services/auth';
-import { CohortApi } from '../../core/services/cohort-api';
-import { Content } from '../../core/services/content';
+import { AuthService } from '../../core/services/auth.service';
+import { CohortService } from '../../core/services/cohort.service';
+import { ContentService } from '../../core/services/content.service';
 import { Cohort } from '../../shared/models';
 import { SeatMeter } from '../../shared/ui/seat-meter';
 
@@ -14,9 +14,9 @@ import { SeatMeter } from '../../shared/ui/seat-meter';
   styleUrl: './cohorts.scss',
 })
 export class Cohorts {
-  readonly auth = inject(Auth);
-  private api = inject(CohortApi);
-  private content = inject(Content);
+  readonly auth = inject(AuthService);
+  private api = inject(CohortService);
+  private content = inject(ContentService);
 
   readonly cohorts = this.api.cohorts;
   readonly programs = this.content.programs;

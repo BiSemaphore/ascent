@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Auth } from '../../core/services/auth';
-import { Content } from '../../core/services/content';
+import { AuthService } from '../../core/services/auth.service';
+import { ContentService } from '../../core/services/content.service';
 
 @Component({
   selector: 'app-programs',
@@ -10,8 +10,8 @@ import { Content } from '../../core/services/content';
   styleUrl: './programs.scss',
 })
 export class Programs {
-  readonly auth = inject(Auth);
-  private content = inject(Content);
+  readonly auth = inject(AuthService);
+  private content = inject(ContentService);
 
   readonly programs = this.content.programs;
   newTitle = '';
