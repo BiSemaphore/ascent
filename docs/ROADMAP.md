@@ -20,15 +20,15 @@ This roadmap sequences the **cohort-based LMS**: we build a working content-and-
 
 ---
 
-## Phase 1 — Auth + Content (CMS + delivery) + gateway  ← we are here
+## Phase 1 — Auth + Content (CMS + delivery) + gateway  ← we are here (backend done; Angular shell pending)
 **Goal:** the LMS backbone — accounts and course content — end to end, REST only, no Kafka yet.
-- [ ] **Auth** service (NestJS): register, login, JWT, roles (learner / instructor / admin)
-- [ ] **Content** service (NestJS):
+- [x] **Auth** service (NestJS): register, login, JWT, roles (learner / instructor / admin)
+- [x] **Content** service (NestJS):
   - *CMS (write):* instructor creates programs → courses → modules → lessons
   - *Delivery (read):* learners list/view published courses & lessons
-- [ ] Each service its own **Postgres**
-- [ ] **Nginx** gateway routing `/api/auth/*` and `/api/content/*`
-- [ ] `docker-compose up` runs it all
+- [x] Each service its own **Postgres**
+- [x] **Nginx** gateway routing `/api/auth/*` and `/api/content/*`
+- [x] `docker-compose up` runs it all
 - [ ] Minimal **Angular** shell: log in; instructor creates a course; learner sees the course list
 
 **Done when:** an instructor can create a course through the app and a learner can see it — all traffic flowing through Nginx to two independent services.
