@@ -66,13 +66,15 @@ Grouped by area. See the [roadmap](ROADMAP.md) for the order we build them — *
 ### Accounts & platform
 - Auth with roles (learner / mentor / admin).
 - Notifications (announcements, deadlines, results).
-- Payments / cohort purchase (kept minimal — stub or one demo flow).
+- Payments / cohort purchase via **Stripe Checkout** (a dedicated Payment service;
+  paid-cohort enrollment is gated on payment via a `payment.completed` event). Runs
+  in Stripe **test mode**.
 - Instructor & admin dashboards and analytics.
 
 ## 6. Explicitly out of scope
 
 - Building a **video streaming pipeline** (we embed or link video, not transcode).
-- Real payment processing (stub it, or a single demo flow at most).
+- **Live/production payments.** Stripe runs in **test mode** only; no real charges.
 - Mobile apps.
 - Production-grade content moderation.
 

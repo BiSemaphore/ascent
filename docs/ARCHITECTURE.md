@@ -37,7 +37,8 @@ How the system is put together: the services, how they talk, where data lives, a
 | --- | --- | --- |
 | **Auth** | users, passwords, JWT, roles (learner / instructor / admin) | REST; emits `UserRegistered` |
 | **Content** | **programs → courses → modules → lessons**, quizzes, coding problems + test cases. **Write side = CMS (instructor authoring); read side = delivery (learner viewing)** | REST |
-| **Cohort** | cohorts (scheduled batches of a program): start date, **schedule**, **seat limit**, mentors, and learner **enrollments** (concurrency-safe) | REST; emits `LearnerEnrolled` |
+| **Cohort** | cohorts (scheduled batches of a program): start date, **schedule**, **seat limit**, mentors, and learner **enrollments** (concurrency-safe) | REST; emits `LearnerEnrolled`; consumes `PaymentCompleted` |
+| **Payment** | cohort purchase via **Stripe Checkout**; payment records; webhook handling (test mode) | REST + Stripe webhook; emits `PaymentCompleted` |
 | **Judge** | code submissions, sandboxed execution, verdicts | consumes `SubmissionCreated`; emits `SubmissionJudged` |
 | **Progress** | per-learner completion vs the cohort curriculum | consumes `SubmissionJudged`, `LessonCompleted` |
 | **Gamification** | XP, streaks, **cohort leaderboard** (Redis sorted sets) | consumes `SubmissionJudged` |
@@ -153,4 +154,20 @@ go in `libs/`.
 Single entry point for all browser traffic: routing (`/api/<service>/*`), TLS
 termination, per-IP rate limiting, request-size caps, and load balancing across
 replicas. It holds no business logic.
+
+### Payments (Stripe) — event-driven purchase
+Paid cohorts are gated on payment, and the gating is an event, not a synchronous
+call:
+```
+Learner buys a seat
+  → Payment: create a Stripe Checkout Session (server-side, cohort price)
+  → learner pays on Stripe's hosted page (Stripe handles all card data; no PCI for us)
+  → Stripe webhook  checkout.session.completed  → Payment verifies the signature
+  → Payment records the payment  ──emit──►  "PaymentCompleted"
+        └─► Cohort enrolls the learner (concurrency-safe, as today)
+```
+Free cohorts (price 0) skip payment. Secrets (Stripe secret key, webhook signing
+secret) are server-side only and run in **test mode**; the webhook signature is
+always verified. Reuses the Kafka + Transactional Outbox + idempotent-consumer
+machinery. Built in a later phase.
 </content>

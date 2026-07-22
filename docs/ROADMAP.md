@@ -49,17 +49,32 @@ This roadmap sequences the **cohort-based LMS**: we build a working content-and-
 
 ---
 
-## Phase 3 — Kafka event backbone + Progress  ← we are here
+## Phase 3 — Kafka event backbone + Progress  ← we are here (LessonCompleted pending)
 **Goal:** introduce async, event-driven communication (the microservices spine).
-- [ ] Learn Kafka concepts first (brokers, topics, partitions, offsets, consumer groups)
-- [ ] Add **Kafka** to compose; build the first producer/consumer **raw with `kafkajs`** to understand it, then adopt NestJS's Kafka transport
-- [ ] Events: `LearnerEnrolled`, `LessonCompleted`
-- [ ] **Progress** service consumes events → tracks per-learner completion against the cohort curriculum
-- [ ] Introduce `libs/contracts` for shared event types
+- [x] Learn Kafka concepts first (brokers, topics, partitions, offsets, consumer groups)
+- [x] Add **Kafka** to compose; build the first producer/consumer **raw with `kafkajs`** to understand it, then adopt NestJS's Kafka transport
+- [x] `LearnerEnrolled` event, published via the **Transactional Outbox**
+- [ ] `LessonCompleted` event (Content) + Progress tracking real completion (lessons done / total)
+- [x] **Progress** service consumes `LearnerEnrolled` (idempotent consumer)
+- [x] Introduce `libs/contracts` for shared event types
 
 **Done when:** completing a lesson in one service updates progress in another via Kafka, with no direct call between them.
 
-**Concepts:** Kafka fundamentals, producers/consumers, NestJS Kafka transport, event contracts, decoupling.
+**Concepts:** Kafka fundamentals, producers/consumers, NestJS Kafka transport, event contracts, decoupling, Transactional Outbox, idempotent consumers.
+
+---
+
+## Payments — Stripe cohort purchase  (schedulable slice; needs Phases 2 + 3)
+**Goal:** paid cohorts, gated on payment via an event (not a synchronous call).
+- [ ] **Payment** service (own Postgres): create a **Stripe Checkout Session**, record payments
+- [ ] Stripe **webhook** endpoint; verify the signature; idempotent by Stripe event id
+- [ ] Emit `PaymentCompleted`; Cohort consumes it and enrolls (paid cohorts). Free cohorts skip
+- [ ] Cohorts gain `price` / `currency`; Angular "buy seat" flow
+- [ ] Stripe **test mode** only; secrets server-side
+
+**Done when:** a learner buys a paid cohort through Stripe test checkout and is enrolled by the resulting event.
+
+**Concepts:** Stripe Checkout + webhooks, webhook signature verification, event-gated workflows, no card data on our servers.
 
 ---
 

@@ -85,6 +85,20 @@ Progress owns **no source data**; `learner_cohorts` is a projection built by
 consuming events. `processed_events` gives the consumer idempotency (an event id
 seen twice is ignored). Unique `(user_id, cohort_id)`.
 
+## Payment (Postgres) — planned (Stripe cohort purchase)
+
+```mermaid
+erDiagram
+  payments         { uuid id PK; uuid cohort_id "ref Cohort"; uuid user_id "ref Auth"; text stripe_session_id; int amount; text currency; enum status "pending | paid | failed"; timestamptz created_at }
+  processed_events { text event_id PK; timestamptz processed_at }
+```
+
+A `payments` row is created when a Checkout Session starts (`pending`) and moves to
+`paid` on the verified `checkout.session.completed` webhook, which emits
+`payment.completed`. `processed_events` (keyed by the Stripe event id) makes webhook
+handling idempotent, Stripe may deliver a webhook more than once. Cohorts gain a
+`price` and `currency` (price `0` = free, no payment).
+
 ---
 
 ## Cross-service references (soft, ID-only, no FK)
@@ -105,6 +119,7 @@ runtime concern, handled by application logic and events, not constraints.
 | Event (topic) | Producer | Consumer(s) | Payload |
 | --- | --- | --- | --- |
 | `learner.enrolled` | Cohort | Progress (+ future Gamification, Notification) | `enrollmentId, cohortId, userId, programId, seatsRemaining` |
+| `payment.completed` (planned) | Payment | Cohort | `paymentId, cohortId, userId, amount, currency` |
 
 Planned: `lesson.completed` (Content -> Progress), `submission.judged`
 (Judge -> Progress/Gamification/Notification). Every event carries the standard
