@@ -4,13 +4,13 @@
   <p class="muted">Scheduled batches, limited seats. Enroll to join the climb.</p>
 </header>
 
-@if (auth.isStaff()) {
-  <section class="card create">
-    <h2>Open a cohort</h2>
+<section class="card create" *appHasRole="['instructor', 'admin']">
+  <h2>Open a cohort</h2>
+  <form [formGroup]="form" (ngSubmit)="open()">
     <div class="grid">
       <label>
         Program
-        <select [(ngModel)]="programId">
+        <select formControlName="programId">
           <option value="" disabled>Select a program</option>
           @for (p of programs.value() ?? []; track p.id) {
             <option [value]="p.id">{{ p.title }}</option>
@@ -19,20 +19,20 @@
       </label>
       <label>
         Title
-        <input [(ngModel)]="title" placeholder="Full-Stack - Aug 2026" />
+        <input formControlName="title" placeholder="Full-Stack - Aug 2026" />
       </label>
       <label>
         Start date
-        <input type="date" [(ngModel)]="startDate" />
+        <input type="date" formControlName="startDate" />
       </label>
       <label>
         Seat limit
-        <input type="number" min="1" [(ngModel)]="seatLimit" />
+        <input type="number" min="1" formControlName="seatLimit" />
       </label>
     </div>
-    <button class="btn btn-primary" (click)="create()">Open cohort</button>
-  </section>
-}
+    <button class="btn btn-primary" type="submit">Open cohort</button>
+  </form>
+</section>
 
 @if (status()) {
   <p class="status muted">{{ status() }}</p>
@@ -43,9 +43,7 @@
 } @else if (cohorts.error()) {
   <p class="error">Couldn't load cohorts. Check you are logged in.</p>
 } @else if ((cohorts.value() ?? []).length === 0) {
-  <div class="card empty">
-    <p class="muted">No cohorts are open yet.</p>
-  </div>
+  <div class="card empty"><p class="muted">No cohorts are open yet.</p></div>
 } @else {
   <ul class="cohorts">
     @for (c of cohorts.value() ?? []; track c.id) {
@@ -58,15 +56,14 @@
         </div>
         <div class="meta">Starts {{ c.startDate | date: 'mediumDate' }}</div>
         <ui-seat-meter [taken]="c.seatsTaken" [limit]="c.seatLimit" />
-        @if (auth.user()?.role === 'learner') {
-          <button
-            class="btn btn-primary enroll"
-            [disabled]="c.full || pending() === c.id"
-            (click)="enroll(c)"
-          >
-            {{ pending() === c.id ? 'Enrolling...' : c.full ? 'Full' : 'Enroll' }}
-          </button>
-        }
+        <button
+          *appHasRole="['learner']"
+          class="btn btn-primary enroll"
+          [disabled]="c.full || pending() === c.id"
+          (click)="enroll(c)"
+        >
+          {{ pending() === c.id ? 'Enrolling...' : c.full ? 'Full' : 'Enroll' }}
+        </button>
       </li>
     }
   </ul>

@@ -19,11 +19,12 @@ Phase 1 is complete.
 - Gateway routes `/api/cohorts`; cohort service containerized in the compose stack.
 - Cohort enrollment UI: browse cohorts with a seat meter, enroll, staff open
   cohorts (Angular).
-- Frontend architecture pass: feature-first structure (core/services, guards,
-  interceptors; shared/models, ui; lazy features), one service per domain with
-  centralized endpoints and environment config, auth + error interceptors
-  (401 -> logout), `httpResource` reads, and a minimal design system (tokens,
-  Space Grotesk / IBM Plex, light + dark). Documented in `docs/CONVENTIONS.md`.
+- Frontend architecture (enterprise Angular): Component -> Facade -> Repository ->
+  HttpClient layering, feature-first structure with per-feature lazy routes,
+  centralized endpoints + environment config, auth + error interceptors
+  (401 -> logout), Reactive Forms, OnPush, an `*appHasRole` permission directive,
+  typed models/envelopes, and a minimal design system (tokens, Space Grotesk /
+  IBM Plex, light + dark). Documented in `docs/CONVENTIONS.md` section 14.
 
 ## [0.1.0] - 2026-07-22
 

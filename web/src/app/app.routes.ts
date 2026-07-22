@@ -4,19 +4,20 @@ import { authGuard } from './core/guards/auth-guard';
 export const routes: Routes = [
   {
     path: 'login',
-    loadComponent: () => import('./features/auth/login').then((m) => m.Login),
+    loadChildren: () =>
+      import('./features/auth/auth.routes').then((m) => m.AUTH_ROUTES),
   },
   {
     path: 'cohorts',
     canActivate: [authGuard],
-    loadComponent: () =>
-      import('./features/cohorts/cohorts').then((m) => m.Cohorts),
+    loadChildren: () =>
+      import('./features/cohorts/cohorts.routes').then((m) => m.COHORTS_ROUTES),
   },
   {
     path: 'programs',
     canActivate: [authGuard],
-    loadComponent: () =>
-      import('./features/catalog/programs').then((m) => m.Programs),
+    loadChildren: () =>
+      import('./features/catalog/catalog.routes').then((m) => m.CATALOG_ROUTES),
   },
   { path: '', pathMatch: 'full', redirectTo: 'cohorts' },
   { path: '**', redirectTo: 'cohorts' },

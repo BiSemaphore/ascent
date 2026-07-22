@@ -196,7 +196,16 @@ Modern, standalone Angular built to enterprise conventions. The Angular app live
 in `web/`.
 
 - **Standalone components** (no NgModules), **signals** for state, new control flow
-  (`@if` / `@for`), and lazy-loaded routes (`loadComponent`).
+  (`@if` / `@for`), **OnPush** change detection on every component, and lazy-loaded
+  features (per-feature `*.routes.ts` via `loadChildren`).
+- **Layering: Component -> Facade -> Repository -> HttpClient -> API.**
+  - **Repository** (one per domain): networking only, endpoints, DTO mapping;
+    returns typed observables; no state, never subscribes.
+  - **Facade** (one per feature): orchestration (RxJS `switchMap`/`forkJoin`/...)
+    and state (signals, `rxResource`/`httpResource`); may combine repositories.
+    Feature-scoped via the feature route's `providers`.
+  - **Component**: receives input, calls the facade, renders state. No HTTP,
+    business rules, filtering, validation, authorization, or DTO mapping.
 - **Feature-first folders:**
   ```
   web/src/
@@ -204,30 +213,36 @@ in `web/`.
     app/
       core/
         config/api.ts        one map of every endpoint URL
-        services/            one service per domain (AuthService, ContentService, ...)
-        guards/              route guards
+        auth/                AuthRepository + AuthFacade (cross-cutting)
+        guards/              functional route guards
         interceptors/        auth + error (functional interceptors)
       shared/
-        models/              typed DTOs
+        models/              typed DTOs, ApiResponse<T>, PageResponse<T>, ...
+        directives/          e.g. *appHasRole
         ui/                  reusable presentational components
-      features/<feature>/    lazy-loaded pages
+      features/<feature>/
+        data/                repositories
+        <feature>.facade.ts
+        pages/               container (smart) components
+        <feature>.routes.ts  lazy route + feature-scoped providers
   ```
-- **API calls live in services, never in components.** Components inject a domain
-  service and consume it. Reads use `httpResource` exposed as a service field;
-  mutations are service methods returning typed observables. No `HttpClient` in
-  components.
-- **One service per domain.** No god `ApiService`. Injectable services use the
-  `Service` suffix consistently (`auth.service.ts` -> `AuthService`); components use
-  no suffix (`Login`, `Cohorts`); guards and interceptors are camelCase functions
-  (`authGuard`, `errorInterceptor`).
-- **URLs in one place:** `core/config/api.ts`, built from `environment.apiBase`.
-  Never hardcode a URL string in a service or component.
-- **Typed DTOs in `shared/models`.** No `any`.
+- **URLs in one place:** `core/config/api.ts`, from `environment.apiBase`. Never
+  hardcode a URL string.
+- **Strong typing in `shared/models`:** DTOs, `ApiResponse<T>`, `PageRequest`,
+  `PageResponse<T>`, `ErrorResponse`. No `any`.
+- **Naming:** injectables use a role suffix (`AuthFacade`, `CohortRepository`);
+  components no suffix (`Login`, `Cohorts`); guards/interceptors are camelCase
+  functions (`authGuard`, `errorInterceptor`).
 - **Functional interceptors:** `auth` attaches the JWT; `error` centralises failure
-  handling (401 -> logout -> `/login`). Do not attach tokens or handle 401s ad hoc.
-- **RxJS orchestration lives in services** (`switchMap` etc.), not components; never
-  nest `subscribe`. Components subscribe once (or use `httpResource`/`async`).
-- **State:** signals-first via services. No NgRx unless complexity demands it.
+  handling (401 -> logout -> `/login`). No ad-hoc token headers or per-component 401s.
+- **Reactive Forms** (`FormBuilder`/`Validators`); avoid template-driven forms.
+- **Authorization** via route guards and the `*appHasRole` directive; never
+  `if (role === 'admin')` in templates or components.
+- Prefer `async` pipe / `toSignal` / `takeUntilDestroyed`; avoid manual subscribe
+  where practical, and never nest `subscribe`.
+- **State:** signals-first in facades. No NgRx unless complexity demands it.
+- **Smart vs presentational:** pages (containers) fetch via the facade;
+  presentational components in `shared/ui` only render inputs.
 - **Design system:** tokens in `styles.scss` (color, type, spacing; light + dark,
   theme-aware). Type: Space Grotesk (display), IBM Plex Sans (body), IBM Plex Mono
-  (data/labels). Base components are class-based; keep the look minimal and precise.
+  (data/labels). Keep the look minimal and precise.

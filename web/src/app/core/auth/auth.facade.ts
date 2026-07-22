@@ -1,8 +1,7 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { tap } from 'rxjs';
-import { API } from '../config/api';
-import { AuthUser, LoginResponse, Role } from '../../shared/models';
+import { AuthRepository } from './auth.repository';
+import { AuthUser, Role } from '../../shared/models';
 
 function decode(token: string | null): AuthUser | null {
   if (!token) {
@@ -18,28 +17,29 @@ function decode(token: string | null): AuthUser | null {
 }
 
 @Injectable({ providedIn: 'root' })
-export class AuthService {
-  private http = inject(HttpClient);
+export class AuthFacade {
+  private repo = inject(AuthRepository);
   private tokenSig = signal<string | null>(localStorage.getItem('token'));
 
   readonly token = this.tokenSig.asReadonly();
   readonly user = computed(() => decode(this.tokenSig()));
+  readonly role = computed(() => this.user()?.role ?? null);
   readonly isLoggedIn = computed(() => this.tokenSig() !== null);
-  readonly isStaff = computed(() => {
-    const r = this.user()?.role;
-    return r === 'instructor' || r === 'admin';
-  });
+
+  hasRole(...roles: Role[]): boolean {
+    const r = this.role();
+    return r !== null && roles.includes(r);
+  }
 
   login(email: string, password: string) {
-    return this.http
-      .post<LoginResponse>(API.auth.login, { email, password })
+    return this.repo
+      .login(email, password)
       .pipe(tap((res) => this.setToken(res.accessToken)));
   }
 
   register(email: string, password: string, role: Role) {
-    const body = role === 'learner' ? { email, password } : { email, password, role };
-    return this.http
-      .post<LoginResponse>(API.auth.register, body)
+    return this.repo
+      .register(email, password, role)
       .pipe(tap((res) => this.setToken(res.accessToken)));
   }
 
