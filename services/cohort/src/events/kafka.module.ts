@@ -2,6 +2,7 @@ import { Global, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { KAFKA_CLIENT, KafkaPublisher } from './kafka.publisher';
+import { OutboxRelay } from './outbox.relay';
 
 @Global()
 @Module({
@@ -18,12 +19,13 @@ import { KAFKA_CLIENT, KafkaPublisher } from './kafka.publisher';
               clientId: 'cohort',
               brokers: config.getOrThrow<string>('KAFKA_BROKERS').split(','),
             },
+            producerOnlyMode: true,
           },
         }),
       },
     ]),
   ],
-  providers: [KafkaPublisher],
+  providers: [KafkaPublisher, OutboxRelay],
   exports: [KafkaPublisher],
 })
 export class KafkaModule {}

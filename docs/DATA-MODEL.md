@@ -62,10 +62,16 @@ erDiagram
   cohorts ||--o{ enrollments : has
   cohorts     { uuid id PK; uuid program_id "ref Content"; text title; timestamptz start_date; int seat_limit; int seats_taken; uuid created_by }
   enrollments { uuid id PK; uuid cohort_id FK; uuid user_id "ref Auth"; timestamptz enrolled_at }
+  outbox      { uuid id PK; text topic; text key; jsonb payload; timestamptz created_at; timestamptz published_at }
 ```
 
 `enrollments` has a unique `(cohort_id, user_id)` — a learner enrolls once. Seats
 are protected by the atomic conditional update (see ARCHITECTURE section 6).
+
+`outbox` implements the **Transactional Outbox**: the event is written in the same
+transaction as the enrollment, so business data and event commit together. A relay
+publishes unpublished rows to Kafka and stamps `published_at`; on a crash it
+republishes (at-least-once), and consumers dedup by `eventId`.
 
 ## Progress (Postgres) — an event-built projection
 

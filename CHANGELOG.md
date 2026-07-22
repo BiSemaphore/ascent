@@ -13,8 +13,9 @@ Phase 1 is complete.
 
 - Kafka event backbone (single-node KRaft) in the stack.
 - `@ascent/contracts` shared lib: the event envelope and `LearnerEnrolled` type.
-- Cohort service publishes `learner.enrolled` after a successful enrollment
-  (NestJS Kafka transport).
+- Cohort publishes `learner.enrolled` via the **Transactional Outbox**: the event
+  is written in the enroll transaction, a relay (`FOR UPDATE SKIP LOCKED`) publishes
+  it to Kafka and stamps it published (at-least-once, no dual-write).
 - Progress service (NestJS, own Postgres): consumes `learner.enrolled` and
   projects per-learner enrollments; idempotent consumer (`processed_events`
   dedup); `GET /api/progress` returns a learner's cohorts, built from events.

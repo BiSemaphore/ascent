@@ -7,18 +7,14 @@ import {
 import { and, asc, eq, sql } from 'drizzle-orm';
 import { TOPICS, createEvent } from '@ascent/contracts';
 import { DB } from '../database/database.module';
-import { cohorts, enrollments } from '../database/schema';
-import { KafkaPublisher } from '../events/kafka.publisher';
+import { cohorts, enrollments, outbox } from '../database/schema';
 import { CreateCohortDto } from './dto/create-cohort.dto';
 import type { Database } from '../database/database.module';
 import type { Cohort } from '../database/schema';
 
 @Injectable()
 export class CohortService {
-  constructor(
-    @Inject(DB) private readonly db: Database,
-    private readonly publisher: KafkaPublisher,
-  ) {}
+  constructor(@Inject(DB) private readonly db: Database) {}
 
   async create(userId: string, dto: CreateCohortDto) {
     const [cohort] = await this.db
@@ -88,23 +84,26 @@ export class CohortService {
         throw new ConflictException('Cohort is full');
       }
 
-      return { enrollment, ...this.withSeats(updated) };
-    });
-
-    await this.publisher.emit(
-      TOPICS.learnerEnrolled,
-      createEvent({
+      const seats = this.withSeats(updated);
+      const event = createEvent({
         eventType: 'LearnerEnrolled',
         producer: 'cohort',
         payload: {
-          enrollmentId: result.enrollment.id,
+          enrollmentId: enrollment.id,
           cohortId,
           userId,
-          programId: result.programId,
-          seatsRemaining: result.seatsRemaining,
+          programId: updated.programId,
+          seatsRemaining: seats.seatsRemaining,
         },
-      }),
-    );
+      });
+      await tx.insert(outbox).values({
+        topic: TOPICS.learnerEnrolled,
+        key: cohortId,
+        payload: event,
+      });
+
+      return { enrollment, ...seats };
+    });
 
     return result;
   }

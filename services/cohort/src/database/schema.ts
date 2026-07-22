@@ -1,11 +1,12 @@
 import {
   integer,
+  jsonb,
   pgTable,
+  text,
   timestamp,
   unique,
   uuid,
 } from 'drizzle-orm/pg-core';
-import { text } from 'drizzle-orm/pg-core';
 
 export const cohorts = pgTable('cohorts', {
   id: uuid('id').primaryKey().defaultRandom(),
@@ -35,5 +36,17 @@ export const enrollments = pgTable(
   (t) => [unique('enrollments_cohort_user_unique').on(t.cohortId, t.userId)],
 );
 
+export const outbox = pgTable('outbox', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  topic: text('topic').notNull(),
+  key: text('key'),
+  payload: jsonb('payload').notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+  publishedAt: timestamp('published_at', { withTimezone: true }),
+});
+
 export type Cohort = typeof cohorts.$inferSelect;
 export type Enrollment = typeof enrollments.$inferSelect;
+export type OutboxRow = typeof outbox.$inferSelect;
