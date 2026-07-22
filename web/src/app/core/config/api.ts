@@ -19,4 +19,7 @@ export const API = {
     list: `${base}/cohorts`,
     enroll: (id: string) => `${base}/cohorts/${id}/enroll`,
   },
+  payments: {
+    checkout: `${base}/payments/checkout`,
+  },
 } as const;

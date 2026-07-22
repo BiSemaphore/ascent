@@ -29,6 +29,10 @@
         Seat limit
         <input type="number" min="1" formControlName="seatLimit" />
       </label>
+      <label>
+        Price (USD, 0 = free)
+        <input type="number" min="0" step="1" formControlName="priceUsd" />
+      </label>
     </div>
     <button class="btn btn-primary" type="submit">Open cohort</button>
   </form>
@@ -54,16 +58,38 @@
             c.full ? 'full' : 'open'
           }}</span>
         </div>
-        <div class="meta">Starts {{ c.startDate | date: 'mediumDate' }}</div>
+        <div class="meta">
+          Starts {{ c.startDate | date: 'mediumDate' }}
+          <span class="price">{{
+            c.price > 0 ? (c.price / 100 | currency: c.currency.toUpperCase()) : 'Free'
+          }}</span>
+        </div>
         <ui-seat-meter [taken]="c.seatsTaken" [limit]="c.seatLimit" />
-        <button
-          *appHasRole="['learner']"
-          class="btn btn-primary enroll"
-          [disabled]="c.full || pending() === c.id"
-          (click)="enroll(c)"
-        >
-          {{ pending() === c.id ? 'Enrolling...' : c.full ? 'Full' : 'Enroll' }}
-        </button>
+        <ng-container *appHasRole="['learner']">
+          @if (c.price > 0) {
+            <button
+              class="btn btn-primary enroll"
+              [disabled]="c.full || pending() === c.id"
+              (click)="buy(c)"
+            >
+              {{
+                pending() === c.id
+                  ? 'Starting checkout...'
+                  : c.full
+                    ? 'Full'
+                    : 'Buy seat · ' + (c.price / 100 | currency: c.currency.toUpperCase())
+              }}
+            </button>
+          } @else {
+            <button
+              class="btn btn-primary enroll"
+              [disabled]="c.full || pending() === c.id"
+              (click)="enroll(c)"
+            >
+              {{ pending() === c.id ? 'Enrolling...' : c.full ? 'Full' : 'Enroll' }}
+            </button>
+          }
+        </ng-container>
       </li>
     }
   </ul>

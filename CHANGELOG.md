@@ -20,6 +20,9 @@ Phase 1 is complete.
 - `@ascent/contracts`: `PaymentCompleted` event + `payment.completed` topic.
 - Gateway routes `/api/payments/*`; Stripe keys sourced from the root `.env`
   (test mode).
+- Angular buy-seat flow: cohort cards show price (or Free), learners get a
+  "Buy seat" button that redirects to Stripe Checkout, staff set a price when
+  opening a cohort, and the return from Stripe shows a status and refreshes.
 
 ## [0.3.0] - 2026-07-22
 

@@ -2,14 +2,16 @@ import { Injectable, inject, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { EMPTY, Observable, catchError, finalize, tap } from 'rxjs';
 import { CohortRepository } from './data/cohort.repository';
+import { PaymentRepository } from './data/payment.repository';
 import { ProgramRepository } from '../catalog/data/program.repository';
-import { Cohort, CreateCohortDto } from '../../shared/models';
+import { CheckoutSession, Cohort, CreateCohortDto } from '../../shared/models';
 
-/** Cohorts feature state + orchestration over the cohort and program repositories. */
+/** Cohorts feature state + orchestration over the cohort, program, and payment repos. */
 @Injectable()
 export class CohortsFacade {
   private cohortRepo = inject(CohortRepository);
   private programRepo = inject(ProgramRepository);
+  private paymentRepo = inject(PaymentRepository);
 
   readonly cohorts = rxResource({ stream: () => this.cohortRepo.list() });
   readonly programs = rxResource({ stream: () => this.programRepo.list() });
@@ -29,6 +31,27 @@ export class CohortsFacade {
         return EMPTY;
       }),
     );
+  }
+
+  /**
+   * Start a paid purchase: returns the Stripe checkout URL for the caller to
+   * redirect to. Sets an error status on failure.
+   */
+  buy(cohort: Cohort): Observable<CheckoutSession> {
+    this.pending.set(cohort.id);
+    this.status.set(null);
+    return this.paymentRepo.checkout(cohort.id).pipe(
+      finalize(() => this.pending.set(null)),
+      catchError((e: { error?: { message?: string } }) => {
+        this.status.set(e?.error?.message ?? 'Could not start checkout.');
+        return EMPTY;
+      }),
+    );
+  }
+
+  /** Refresh the cohort list (e.g. after returning from a successful payment). */
+  refresh() {
+    this.cohorts.reload();
   }
 
   /** Enroll the current learner into a cohort, then refresh the list. */

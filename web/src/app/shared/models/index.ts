@@ -28,7 +28,13 @@ export interface Cohort {
   seatsTaken: number;
   seatsRemaining: number;
   full: boolean;
+  price: number;
+  currency: string;
   createdAt: string;
+}
+
+export interface CheckoutSession {
+  checkoutUrl: string;
 }
 
 export interface CreateCohortDto {
@@ -36,6 +42,8 @@ export interface CreateCohortDto {
   title: string;
   startDate: string;
   seatLimit: number;
+  price?: number;
+  currency?: string;
 }
 
 export interface CreateProgramDto {
