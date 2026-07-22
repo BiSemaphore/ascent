@@ -60,7 +60,7 @@ courses, modules, lessons).
 ```mermaid
 erDiagram
   cohorts ||--o{ enrollments : has
-  cohorts     { uuid id PK; uuid program_id "ref Content"; text title; timestamptz start_date; int seat_limit; int seats_taken; uuid created_by }
+  cohorts     { uuid id PK; uuid program_id "ref Content"; text title; timestamptz start_date; int seat_limit; int seats_taken; int price; text currency; uuid created_by }
   enrollments { uuid id PK; uuid cohort_id FK; uuid user_id "ref Auth"; timestamptz enrolled_at }
   outbox      { uuid id PK; text topic; text key; jsonb payload; timestamptz created_at; timestamptz published_at }
 ```
@@ -91,13 +91,14 @@ seen twice is ignored). Unique `(user_id, cohort_id)`.
 erDiagram
   payments         { uuid id PK; uuid cohort_id "ref Cohort"; uuid user_id "ref Auth"; text stripe_session_id; int amount; text currency; enum status "pending | paid | failed"; timestamptz created_at }
   processed_events { text event_id PK; timestamptz processed_at }
+  outbox           { uuid id PK; text topic; text key; jsonb payload; timestamptz created_at; timestamptz published_at }
 ```
 
 A `payments` row is created when a Checkout Session starts (`pending`) and moves to
-`paid` on the verified `checkout.session.completed` webhook, which emits
-`payment.completed`. `processed_events` (keyed by the Stripe event id) makes webhook
-handling idempotent, Stripe may deliver a webhook more than once. Cohorts gain a
-`price` and `currency` (price `0` = free, no payment).
+`paid` on the verified `checkout.session.completed` webhook, which writes a
+`payment.completed` event to the outbox. `processed_events` (keyed by the Stripe
+event id) makes webhook handling idempotent, Stripe may deliver a webhook more than
+once. Cohorts gain a `price` and `currency` (price `0` = free, no payment).
 
 ---
 

@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Inject,
   Injectable,
@@ -29,6 +30,8 @@ export class CohortService {
         title: dto.title,
         startDate: new Date(dto.startDate),
         seatLimit: dto.seatLimit,
+        price: dto.price ?? 0,
+        currency: dto.currency ?? 'usd',
         createdBy: userId,
       })
       .returning();
@@ -61,13 +64,38 @@ export class CohortService {
   }
 
   /**
-   * Enroll a learner into a cohort, concurrency-safe. Uses an atomic conditional
-   * update (`seats_taken < seat_limit`) so seats never oversell, and writes a
-   * `LearnerEnrolled` event to the outbox in the same transaction.
+   * Direct enrollment (free cohorts only). Paid cohorts must go through Stripe
+   * checkout, which enrolls via the `payment.completed` event.
    * @throws NotFoundException when the cohort does not exist
+   * @throws BadRequestException when the cohort is paid
    * @throws ConflictException when already enrolled or the cohort is full
    */
   async enroll(cohortId: string, userId: string) {
+    const [cohort] = await this.db
+      .select()
+      .from(cohorts)
+      .where(eq(cohorts.id, cohortId))
+      .limit(1);
+    if (!cohort) {
+      throw new NotFoundException('Cohort not found');
+    }
+    if (cohort.price > 0) {
+      throw new BadRequestException(
+        'This cohort requires payment. Purchase a seat to enroll.',
+      );
+    }
+    return this.enrollNow(cohortId, userId);
+  }
+
+  /**
+   * Concurrency-safe enrollment. Atomic conditional update
+   * (`seats_taken < seat_limit`) so seats never oversell; writes a
+   * `LearnerEnrolled` event to the outbox in the same transaction. Called for
+   * free cohorts directly and for paid cohorts after `payment.completed`.
+   * @throws NotFoundException when the cohort does not exist
+   * @throws ConflictException when already enrolled or the cohort is full
+   */
+  async enrollNow(cohortId: string, userId: string) {
     const [exists] = await this.db
       .select({ id: cohorts.id })
       .from(cohorts)

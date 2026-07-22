@@ -15,6 +15,8 @@ export const cohorts = pgTable('cohorts', {
   startDate: timestamp('start_date', { withTimezone: true }).notNull(),
   seatLimit: integer('seat_limit').notNull(),
   seatsTaken: integer('seats_taken').notNull().default(0),
+  price: integer('price').notNull().default(0),
+  currency: text('currency').notNull().default('usd'),
   createdBy: uuid('created_by').notNull(),
   createdAt: timestamp('created_at', { withTimezone: true })
     .notNull()

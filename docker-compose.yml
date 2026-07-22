@@ -182,6 +182,45 @@ services:
     ports:
       - "3004:3004"
 
+  payment-db:
+    image: postgres:17
+    container_name: ascent-payment-db
+    environment:
+      POSTGRES_USER: payment
+      POSTGRES_PASSWORD: payment
+      POSTGRES_DB: payment
+    ports:
+      - "5437:5432"
+    volumes:
+      - payment-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U payment -d payment"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  payment:
+    build:
+      context: .
+      dockerfile: services/payment/Dockerfile
+    container_name: ascent-payment
+    depends_on:
+      payment-db:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    environment:
+      PORT: 3005
+      DATABASE_URL: postgres://payment:payment@payment-db:5432/payment
+      JWT_SECRET: ${JWT_SECRET}
+      KAFKA_BROKERS: kafka:9092
+      COHORT_URL: http://cohort:3003
+      PUBLIC_URL: ${PUBLIC_URL:-http://localhost:4200}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY:-sk_test_placeholder}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET:-whsec_placeholder}
+    ports:
+      - "3005:3005"
+
   gateway:
     image: nginx:1.27-alpine
     container_name: ascent-gateway
@@ -190,6 +229,7 @@ services:
       - content
       - cohort
       - progress
+      - payment
     ports:
       - "8080:80"
     volumes:
@@ -201,4 +241,5 @@ volumes:
   content-db-data:
   cohort-db-data:
   progress-db-data:
+  payment-db-data:
   kafka-data:

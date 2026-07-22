@@ -9,6 +9,18 @@ Phase 1 is complete.
 
 ## [Unreleased]
 
+### Added
+
+- Payment service (NestJS, own Postgres): Stripe Checkout for cohort purchase.
+  `POST /api/payments/checkout` creates a Checkout Session (price read from Cohort);
+  the signature-verified Stripe webhook writes `payment.completed` to its outbox.
+- Cohorts gain `price`/`currency`. Paid cohorts are gated: direct enroll is 400,
+  and Cohort consumes `payment.completed` to enroll the buyer (reusing the
+  concurrency-safe path). Free cohorts (price 0) still enroll directly.
+- `@ascent/contracts`: `PaymentCompleted` event + `payment.completed` topic.
+- Gateway routes `/api/payments/*`; Stripe keys sourced from the root `.env`
+  (test mode).
+
 ## [0.3.0] - 2026-07-22
 
 Phase 3: the Kafka event backbone and the Progress service. Cohort and Content

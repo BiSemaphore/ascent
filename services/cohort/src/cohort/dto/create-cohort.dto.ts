@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import {
   IsISO8601,
   IsInt,
+  IsOptional,
   IsString,
   IsUUID,
   Min,
@@ -26,4 +27,20 @@ export class CreateCohortDto {
   @IsInt()
   @Min(1)
   seatLimit!: number;
+
+  @ApiProperty({
+    example: 4900,
+    minimum: 0,
+    description: 'Price in the currency minor unit (e.g. cents); 0 = free',
+    required: false,
+  })
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  price?: number;
+
+  @ApiProperty({ example: 'usd', required: false })
+  @IsOptional()
+  @IsString()
+  currency?: string;
 }

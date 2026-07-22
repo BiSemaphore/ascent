@@ -4,6 +4,7 @@ import { randomUUID } from 'node:crypto';
 export const TOPICS = {
   learnerEnrolled: 'learner.enrolled',
   lessonCompleted: 'lesson.completed',
+  paymentCompleted: 'payment.completed',
 } as const;
 
 /**
@@ -41,6 +42,15 @@ export interface LessonCompleted {
   lessonId: string;
   programId: string;
   userId: string;
+}
+
+/** Emitted by Payment when a cohort purchase succeeds; Cohort enrolls on it. */
+export interface PaymentCompleted {
+  paymentId: string;
+  cohortId: string;
+  userId: string;
+  amount: number;
+  currency: string;
 }
 
 /**
