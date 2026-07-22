@@ -9,6 +9,10 @@ import {
 import { AuthFacade } from '../../core/auth/auth.facade';
 import { Role } from '../models';
 
+/**
+ * Structural directive that renders its content only when the current user holds
+ * one of the given roles. Usage: `*appHasRole="['instructor','admin']"`.
+ */
 @Directive({ selector: '[appHasRole]' })
 export class HasRoleDirective {
   private tpl = inject(TemplateRef<unknown>);

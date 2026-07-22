@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { API } from '../../../core/config/api';
 import { Cohort, CreateCohortDto, EnrollResult } from '../../../shared/models';
 
+/** HTTP calls for the cohort domain (list, create, enroll). */
 @Injectable({ providedIn: 'root' })
 export class CohortRepository {
   private http = inject(HttpClient);

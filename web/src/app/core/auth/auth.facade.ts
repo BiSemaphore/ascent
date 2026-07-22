@@ -16,6 +16,10 @@ function decode(token: string | null): AuthUser | null {
   }
 }
 
+/**
+ * Auth state + orchestration for the app. Holds the JWT and exposes the decoded
+ * user, role, and login state as signals; persists the token in localStorage.
+ */
 @Injectable({ providedIn: 'root' })
 export class AuthFacade {
   private repo = inject(AuthRepository);
@@ -26,23 +30,27 @@ export class AuthFacade {
   readonly role = computed(() => this.user()?.role ?? null);
   readonly isLoggedIn = computed(() => this.tokenSig() !== null);
 
+  /** @returns true when the current user holds one of the given roles. */
   hasRole(...roles: Role[]): boolean {
     const r = this.role();
     return r !== null && roles.includes(r);
   }
 
+  /** Log in and store the returned JWT. */
   login(email: string, password: string) {
     return this.repo
       .login(email, password)
       .pipe(tap((res) => this.setToken(res.accessToken)));
   }
 
+  /** Register a new account and store the returned JWT. */
   register(email: string, password: string, role: Role) {
     return this.repo
       .register(email, password, role)
       .pipe(tap((res) => this.setToken(res.accessToken)));
   }
 
+  /** Clear the token (client-side logout). */
   logout() {
     localStorage.removeItem('token');
     this.tokenSig.set(null);

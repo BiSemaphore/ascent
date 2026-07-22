@@ -2,6 +2,7 @@ import { environment } from '../../../environments/environment';
 
 const base = environment.apiBase;
 
+/** Every backend endpoint URL in one place, built from `environment.apiBase`. */
 export const API = {
   auth: {
     login: `${base}/auth/login`,

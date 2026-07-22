@@ -4,6 +4,7 @@ import { EMPTY, Observable, catchError, of, switchMap, tap } from 'rxjs';
 import { ProgramRepository } from './data/program.repository';
 import { Program } from '../../shared/models';
 
+/** Catalog feature state + orchestration over {@link ProgramRepository}. */
 @Injectable()
 export class CatalogFacade {
   private repo = inject(ProgramRepository);
@@ -11,6 +12,11 @@ export class CatalogFacade {
   readonly programs = rxResource({ stream: () => this.repo.list() });
   readonly status = signal<string | null>(null);
 
+  /**
+   * Create a program, optionally its first course, and publish them.
+   * @param title - the program title
+   * @param courseTitle - optional first course to create and publish
+   */
   publishNewProgram(title: string, courseTitle?: string): Observable<unknown> {
     this.status.set('Publishing...');
     return this.repo.create({ title }).pipe(

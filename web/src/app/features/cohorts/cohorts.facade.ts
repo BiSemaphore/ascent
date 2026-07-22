@@ -5,6 +5,7 @@ import { CohortRepository } from './data/cohort.repository';
 import { ProgramRepository } from '../catalog/data/program.repository';
 import { Cohort, CreateCohortDto } from '../../shared/models';
 
+/** Cohorts feature state + orchestration over the cohort and program repositories. */
 @Injectable()
 export class CohortsFacade {
   private cohortRepo = inject(CohortRepository);
@@ -15,6 +16,7 @@ export class CohortsFacade {
   readonly status = signal<string | null>(null);
   readonly pending = signal<string | null>(null);
 
+  /** Open a cohort, then refresh the list. */
   openCohort(dto: CreateCohortDto): Observable<unknown> {
     this.status.set('Opening cohort...');
     return this.cohortRepo.create(dto).pipe(
@@ -29,6 +31,7 @@ export class CohortsFacade {
     );
   }
 
+  /** Enroll the current learner into a cohort, then refresh the list. */
   enroll(cohort: Cohort): Observable<unknown> {
     this.pending.set(cohort.id);
     this.status.set(null);

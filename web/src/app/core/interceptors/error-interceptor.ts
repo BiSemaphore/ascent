@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { catchError, throwError } from 'rxjs';
 import { AuthFacade } from '../auth/auth.facade';
 
+/** Central HTTP error handling: on 401, log out and redirect to /login. */
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const auth = inject(AuthFacade);
   const router = inject(Router);

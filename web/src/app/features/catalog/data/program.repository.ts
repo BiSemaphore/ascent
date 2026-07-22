@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { API } from '../../../core/config/api';
 import { CreateProgramDto, Program } from '../../../shared/models';
 
+/** HTTP calls for programs/courses (content domain); shared across features. */
 @Injectable({ providedIn: 'root' })
 export class ProgramRepository {
   private http = inject(HttpClient);
